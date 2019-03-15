@@ -5,27 +5,13 @@ import asyncio
 import random
 import json
 import requests
+from auditor import Auditor
+
 
 clientID = 'NTI2NTA0Mzc2ODUzMDY5ODQ1.D2ScuQ.6bn-tOxaK65db0e6Cyz0ecYwPMM'
 client = discord.Client()
 bot = commands.Bot(command_prefix='$', case_insensitive=True)
 
-class Auditor:
-
-    textFile = None
-    filename = ""
-    def __init__(self, filename):
-        self.textFile = open(filename, 'a')
-        self.filename = filename
-        self.textFile.close()
-
-    def audit(self, author, file_url, tags):
-        self.textFile = open(self.filename, 'a')
-        self.textFile.write(author + ", " + tags + ", " + file_url + "\n")
-        self.closeFile()
-        
-    def closeFile(self):
-        self.textFile.close()
 
 auditor = Auditor("audit.txt")
 
