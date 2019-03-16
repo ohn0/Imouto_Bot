@@ -5,6 +5,10 @@ import asyncio
 import random
 import json
 import requests
+from booruComm import booruComm
+from gelbooruCaller import gelbooruCaller
+from realbooruCaller import realbooruCaller
+from sfwCaller import sfwCaller
 from auditor import Auditor
 
 
@@ -16,45 +20,64 @@ bot = commands.Bot(command_prefix='$', case_insensitive=True)
 auditor = Auditor("audit.txt")
 
 @bot.command()
-async def gel(ctx, *, arg):
-    sendTags = False
-    print(arg.split(" "))
-    argList = arg.split(" ")
-    randPost = random.randint(0, 50)
-    tagList = ""
-    responseMessage = ctx.message.author.mention + ", I got an image for you. "
-    params = []
-    imageReturned = True
-    for arg in argList:
-        if(not arg.startswith('--')):
-            tagList = arg + "+"+ tagList
-        else:
-            params.append(arg)
+async def sfw(ctx, *, arg):
+    caller = sfwCaller(ctx, arg)
+    caller.setArgs()
+    caller.makeRequest()
+    response = caller.getContent()
+    # response = caller.getResponse()
 
-    for param in params:
-        if param == '--tags':
-            sendTags = True
+    print(response)
+    if response != None:
+        # await ctx.send("ping")
+        auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1])
+        await ctx.send(response["response"])
+        if(response["sendTags"]):
+            await ctx.send("These are the tags I found with that image: \n" + response["tags"])
 
-
-    
-    tagList = tagList[0:len(tagList)-1]
-
-    apicall = "https://gelbooru.com/index.php?page=dapi&s=post&q=index&limit="+str(randPost)+"&json=1&tags="+tagList
-    try:
-        response = requests.get(apicall)
-        response = response.json()
-    except json.decoder.JSONDecodeError:
-        imageReturned = False
-
-    if imageReturned:
-        imageNum = random.randint(0, randPost -1)
-        responseMessage += response[imageNum]['file_url']
-        auditor.audit(str(ctx.message.author), str(response[imageNum]['file_url']), str(response[imageNum]['tags']))
-        await ctx.send(responseMessage)
-        if sendTags:
-            await ctx.send("These are the tags associated with the image I just posted: \r" + response[imageNum]['tags'])
-    else: 
+    else:
         await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
+
+
+@bot.command()
+async def gel(ctx, *, arg):
+    caller = gelbooruCaller(ctx, arg)
+    caller.setArgs()
+    caller.makeRequest()
+    response = caller.getContent()
+    # response = caller.getResponse()
+
+    print(response)
+    if response != None:
+        auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1])
+        await ctx.send(response["response"])
+        if(response["sendTags"]):
+            await ctx.send("These are the tags I found with that image: \n" + response["tags"])
+
+    else:
+        await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
+
+
+@bot.command()
+async def real(ctx, *, arg):
+    caller = realbooruCaller(ctx, arg)
+    caller.setArgs()
+    caller.makeRequest()
+    response = caller.getContent()
+    # response = caller.getResponse()
+
+    print(response)
+    if response != None:
+        # await ctx.send("ping")
+        auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1])
+        await ctx.send(response["response"])
+        if(response["sendTags"]):
+            await ctx.send("These are the tags I found with that image: \n" + response["tags"])
+
+    else:
+        await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
+    
+
 
 
 @bot.command()
