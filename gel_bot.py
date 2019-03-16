@@ -27,7 +27,6 @@ async def sfw(ctx, *, arg):
     response = caller.getContent()
     # response = caller.getResponse()
 
-    print(response)
     if response != None:
         # await ctx.send("ping")
         auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1])
@@ -47,7 +46,7 @@ async def gel(ctx, *, arg):
     response = caller.getContent()
     # response = caller.getResponse()
 
-    print(response)
+    # print(response)
     if response != None:
         auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1])
         await ctx.send(response["response"])
