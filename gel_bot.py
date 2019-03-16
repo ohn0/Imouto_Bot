@@ -13,9 +13,7 @@ from auditor import Auditor
 
 
 clientID = 'NTI2NTA0Mzc2ODUzMDY5ODQ1.D2ScuQ.6bn-tOxaK65db0e6Cyz0ecYwPMM'
-client = discord.Client()
 bot = commands.Bot(command_prefix='$', case_insensitive=True)
-
 
 auditor = Auditor("audit.txt")
 
@@ -82,10 +80,8 @@ async def real(ctx, *, arg):
 @bot.command()
 async def bye(ctx):
     await ctx.send("Y'all freaking me out too much, I'm out.")
-    await bot.close()
-
+    await bot.logout()
 
 
 bot.run(clientID)
-auditor.closeFile()
 
