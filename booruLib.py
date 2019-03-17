@@ -3,11 +3,13 @@ class booruLib:
     REALBOORU = 0x1
     SFWBOORU  = 0x11
     KONACHAN  = 0x111
+    YANDERE   = 0x100
 
     apiEndpoints = {GELBOORU  : "https://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=",
                     REALBOORU : "https://realbooru.com/index.php?page=dapi&s=post&q=index&limit=",
                     SFWBOORU  : "https://safebooru.org/index.php?page=dapi&s=post&q=index&limit=",
-                    KONACHAN  : "http://konachan.com/post.json?limit="}
+                    KONACHAN  : "http://konachan.com/post.json?limit=",
+                    YANDERE   : "https://yande.re/post.json?limit="}
 
 
 

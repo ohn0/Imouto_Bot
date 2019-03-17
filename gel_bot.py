@@ -9,6 +9,7 @@ from booruComm import booruComm
 from gelbooruCaller import gelbooruCaller
 from realbooruCaller import realbooruCaller
 from sfwCaller import sfwCaller
+from yandereCaller import YandereCaller
 from konachanCaller import KonachanCaller
 from UserCollection import UserCollection
 from UserStatTracker import UserStatTracker
@@ -31,6 +32,22 @@ async def bully(ctx, arg1):
 @bot.command()
 async def kona(ctx, *, arg):
     caller = KonachanCaller(ctx, arg)
+    caller.setArgs()
+    caller.makeRequest()
+    response = caller.getContent()
+
+    if response != None:
+        auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1])
+        userStats.updateStats(str(ctx.message.author))
+        await ctx.send(response["response"])
+        if(response["sendTags"]):
+            await ctx.send("These are the tags I found with that image: \n" + response["tags"])
+    else:
+        await ctx.send("Those tags returned no images, what's wrong with you " + ctx.message.author.mention)
+
+@bot.command()
+async def yan(ctx, *, arg):
+    caller = YandereCaller(ctx, arg)
     caller.setArgs()
     caller.makeRequest()
     response = caller.getContent()
