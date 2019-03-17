@@ -48,7 +48,7 @@ async def sfw(ctx, *, arg):
 async def stats(ctx):
     currentStats = userStats.getStats()
     sortedStats = sorted(currentStats.items(), key=lambda x: x[1],reverse=True)
-    print(sortedStats)
+    # print(sortedStats)
     statMessage = "```\n-----------------------------------------------------------\nHere is a list of the top freaks in this channel who have made the most requests to this little loli!\n"
     for stat in sortedStats:
         # statMessage += (str(stat[0]) + "\t\t\t\t\t\t" + str(stat[1]) + "\n")
