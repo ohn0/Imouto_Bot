@@ -27,6 +27,7 @@ class UserStatTracker:
             self.userStats[tUser] = 1
         else:
             self.userStats[tUser] += 1
+        return 0
 
         
     
