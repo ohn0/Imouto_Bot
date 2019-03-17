@@ -23,6 +23,7 @@ class booruComm:
         self.randPost = random.randint(0, 50)
         self.imageReturned = True
         self.sendTags = False
+        self.usePages = False
         self.tags = ""
         self.ctx = ctx
         self.params = []
@@ -37,14 +38,17 @@ class booruComm:
         for param in self.params:
             if param == '--tags':
                 self.sendTags = True
+            elif param == '--pages':
+                self.usePages = True
 
         self.tagList = self.tagList[0: len(self.tagList)-1]
 
     def resolveResponse(self):
         try:
-            self.apicall += str(self.randPost)+"&json=1&tags="+self.tagList
+            self.apicall += "200&json=1&tags="+self.tagList
             self.response = requests.get(self.apicall)
             self.response = self.response.json()
+            self.randPost = random.randint(0, len(self.response)-1)
         except json.decoder.JSONDecodeError:
             self.imageReturned = False
 
@@ -53,7 +57,7 @@ class booruComm:
 
     def resolveContent(self):
         if self.imageReturned:
-            imageNum = random.randint(0, self.randPost - 1)
+            imageNum = self.randPost#random.randint(0, self.randPost - 1)
             responseMessage = self.ctx.message.author.mention + ", Here's your image, big brother! " + self.response[imageNum]['file_url']
             self.tags = self.response[imageNum]['tags']
             return { "response": responseMessage,

@@ -21,7 +21,7 @@ class realbooruCaller(booruComm):
 
     def resolveContent(self):
         if self.imageReturned:
-            imageNum = random.randint(0, self.randPost - 1)
+            imageNum = self.randPost
             imageURL = self.buildURL(imageNum)
             responseMessage = self.ctx.message.author.mention + ", Here's your image, big brother! " + imageURL
             self.tags = self.response[imageNum]['tags']

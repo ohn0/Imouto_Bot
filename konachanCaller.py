@@ -2,6 +2,7 @@ from booruComm import booruComm
 from booruLib import booruLib
 import requests
 import json
+import random
 
 class KonachanCaller(booruComm):
     def __init__(self, ctx, args):
@@ -14,9 +15,10 @@ class KonachanCaller(booruComm):
 
     def resolveResponse(self):
         try:
-            self.apicall += str(self.randPost)+"&tags="+self.tagList
+            self.apicall += "200&tags="+self.tagList
             self.response = requests.get(self.apicall)
             self.response = self.response.json()
+            self.randPost = random.randint(0, len(self.response)-1)
         except json.decoder.JSONDecodeError:
             self.imageReturned = False
 
