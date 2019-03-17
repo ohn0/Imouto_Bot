@@ -40,7 +40,6 @@ async def kona(ctx, *, arg):
     if response != None:
         auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1])
         userStats.updateStats(str(ctx.message.author))
-        print(response["response"])
         await ctx.send(response["response"])
         if(response["sendTags"]):
             await ctx.send("These are the tags I found with that image: \n" + response["tags"])

@@ -48,12 +48,22 @@ class booruComm:
             self.apicall += "200&json=1&tags="+self.tagList
             self.response = requests.get(self.apicall)
             self.response = self.response.json()
-            self.randPost = random.randint(0, len(self.response)-1)
+            responseLength = len(self.response)
+            if responseLength == 0:
+                self.imageReturned = False
+            else:
+                self.randPost = random.randint(0, responseLength-1)
         except json.decoder.JSONDecodeError:
             self.imageReturned = False
 
     def getResponse(self):
         return self.response
+
+    def validateResponse(self):
+        if len(self.response) == 0:
+            self.imageReturned = False
+            return False
+        return True
 
     def resolveContent(self):
         if self.imageReturned:

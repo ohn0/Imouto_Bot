@@ -18,7 +18,11 @@ class KonachanCaller(booruComm):
             self.apicall += "200&tags="+self.tagList
             self.response = requests.get(self.apicall)
             self.response = self.response.json()
-            self.randPost = random.randint(0, len(self.response)-1)
+            responseLength = len(self.response)
+            if responseLength == 0:
+                self.imageReturned = False
+            else:
+                self.randPost = random.randint(0, responseLength-1)
         except json.decoder.JSONDecodeError:
             self.imageReturned = False
 
