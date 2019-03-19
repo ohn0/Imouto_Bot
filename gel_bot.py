@@ -26,7 +26,9 @@ auditor.generateAuditLog()
 auditLines = auditor.getInitialAuditLog()
 users = UserCollection(auditLines)
 userStats = UserStatTracker(users.getUsers(), auditLines)
-userLimiter = UserLimiter()
+gelbooruLimiter = UserLimiter()
+realbooruLimiter = UserLimiter()
+
 
 @bot.command()
 async def bully(ctx, arg1):
@@ -98,9 +100,9 @@ async def stats(ctx):
 @bot.command()
 async def gel(ctx, *, arg):
     userLimited = True
-    if(userLimiter.checkIfLimited(str(ctx.message.author)) == False):
+    if(gelbooruLimiter.checkIfLimited(str(ctx.message.author)) == False):
         userLimited = False
-        userLimiter.limitUser(str(ctx.message.author))
+        gelbooruLimiter.limitUser(str(ctx.message.author))
 
     caller = gelbooruCaller(ctx, arg)
     caller.setArgs()
@@ -121,21 +123,27 @@ async def gel(ctx, *, arg):
 
 @bot.command()
 async def real(ctx, *, arg):
+    userLimited = True
+    if(realbooruLimiter.checkIfLimited(str(ctx.message.author)) == False):
+        userLimited = False
+        realbooruLimiter.limitUser(str(ctx.message.author))
     caller = realbooruCaller(ctx, arg)
     caller.setArgs()
     caller.makeRequest()
     response = caller.getContent()
+    if not userLimited:
+        if response != None:
+            auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1])
+            await ctx.send(response["response"])
+            userStats.updateStats(str(ctx.message.author))
+            if(response["sendTags"]):
+                await ctx.send("These are the tags I found with that image: \n" + response["tags"])
 
-    if response != None:
-        auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1])
-        await ctx.send(response["response"])
-        userStats.updateStats(str(ctx.message.author))
-        if(response["sendTags"]):
-            await ctx.send("These are the tags I found with that image: \n" + response["tags"])
-
+        else:
+            await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
     else:
-        await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
-    
+        await ctx.send("You just made a request! Your little sister can only do so much uwu " + ctx.message.author.mention)
+        
 
 @bot.command()
 async def prev(ctx):

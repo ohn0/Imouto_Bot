@@ -12,8 +12,9 @@ class UserLimiter:
         self.userTimers[tUser] = datetime.datetime.now()
 
     def checkIfLimited(self, user):
-        if not any(self.userTimers):
-            return False            
+        userExists = self.userTimers.setdefault(user)
+        if userExists == None:
+            return False
         tUser = user
         tDelta = abs(self.userTimers[tUser] - datetime.datetime.now())
         if tDelta.seconds > 5:
