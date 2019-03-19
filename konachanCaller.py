@@ -8,6 +8,7 @@ class KonachanCaller(booruComm):
     def __init__(self, ctx, args):
         super().__init__(ctx, args)
         self.apicall = booruLib.apiEndpoints[booruLib.KONACHAN]
+        self.instance = "KONACHAN"
 
 
     def setArgs(self):

@@ -7,7 +7,7 @@ class sfwCaller(booruComm):
     def __init__(self, ctx, args):
         super().__init__(ctx, args)
         self.apicall = booruLib.apiEndpoints[booruLib.SFWBOORU]
-
+        self.instance = "SAFEBOORU"
     def setArgs(self):
         self.splitArgs()
 

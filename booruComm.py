@@ -1,4 +1,5 @@
 from booruLib import booruLib
+from TagStatTracker import tag, TagStatTracker
 import discord
 from discord.ext import commands
 import os
@@ -20,6 +21,7 @@ class booruComm:
     response = None
     def __init__(self, ctx, args):
         self.argList = args.split(" ")
+        self.tagLogger = []
         self.randPost = random.randint(0, 50)
         self.imageReturned = True
         self.sendTags = False
@@ -27,11 +29,13 @@ class booruComm:
         self.tags = ""
         self.ctx = ctx
         self.params = []
+        self.instance = ""
 
     def splitArgs(self):
         for arg in self.argList:
             if(not arg.startswith('--')):
                 self.tagList = arg + "+" + self.tagList
+                self.tagLogger.append(arg)
             else:
                 self.params.append(arg)
 
@@ -40,6 +44,9 @@ class booruComm:
                 self.sendTags = True
             elif param == '--pages':
                 self.usePages = True
+
+        tagEntry = TagStatTracker()
+        tagEntry.updateTagFile(tag(self.tagLogger, self.instance,str(self.ctx.message.author)))
 
         self.tagList = self.tagList[0: len(self.tagList)-1]
 

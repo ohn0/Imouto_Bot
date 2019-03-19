@@ -8,6 +8,7 @@ class YandereCaller(booruComm):
     def __init__(self, ctx, args):
         super().__init__(ctx, args)
         self.apicall = booruLib.apiEndpoints[booruLib.YANDERE]
+        self.instance = "YANDERE"
 
 
     def setArgs(self):

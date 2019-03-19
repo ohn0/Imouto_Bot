@@ -7,7 +7,7 @@ class realbooruCaller(booruComm):
     def __init__(self, ctx, args):
         super().__init__(ctx, args)
         self.apicall = booruLib.apiEndpoints[booruLib.REALBOORU]
-
+        self.instance = "REALBOORU"
     def setArgs(self):
         self.splitArgs()
 
