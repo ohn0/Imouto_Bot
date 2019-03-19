@@ -46,7 +46,7 @@ async def kona(ctx, *, arg):
         userStats.updateStats(str(ctx.message.author))
         await ctx.send(response["response"])
         if(response["sendTags"]):
-            await ctx.send("These are the tags I found with that image: \n" + response["tags"])
+            await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
     else:
         await ctx.send("Those tags returned no images, what's wrong with you " + ctx.message.author.mention)
 
@@ -62,7 +62,7 @@ async def yan(ctx, *, arg):
         userStats.updateStats(str(ctx.message.author))
         await ctx.send(response["response"])
         if(response["sendTags"]):
-            await ctx.send("These are the tags I found with that image: \n" + response["tags"])
+            await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
     else:
         await ctx.send("Those tags returned no images, what's wrong with you " + ctx.message.author.mention)
 
@@ -80,7 +80,7 @@ async def sfw(ctx, *, arg):
         userStats.updateStats(str(ctx.message.author))
         await ctx.send(response["response"])
         if(response["sendTags"]):
-            await ctx.send("These are the tags I found with that image: \n" + response["tags"])
+            await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
 
     else:
         await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
@@ -115,7 +115,7 @@ async def gel(ctx, *, arg):
             await ctx.send(response["response"])
             userStats.updateStats(str(ctx.message.author))
             if(response["sendTags"]):
-                await ctx.send("These are the tags I found with that image: \n" + response["tags"])
+                await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
         else:
             await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
     else:
@@ -137,7 +137,7 @@ async def real(ctx, *, arg):
             await ctx.send(response["response"])
             userStats.updateStats(str(ctx.message.author))
             if(response["sendTags"]):
-                await ctx.send("These are the tags I found with that image: \n" + response["tags"])
+                await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
 
         else:
             await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
