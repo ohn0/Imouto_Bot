@@ -1,6 +1,7 @@
 # Imouto_Bot
 A discord bot that pulls images from various boorus.
 
+Requires Discordpy rewrite version
 
 Currently it is set to pull from the following boorus(?):
 
