@@ -16,7 +16,7 @@ class Auditor:
 
     def audit(self, author, file_url, tags):
         self.textFile = open(self.filename, 'a')
-        self.textFile.write(author + ", " + tags + ", " + file_url + "\n")
+        self.textFile.write(author + ", " + tags + ", " + file_url +  "\n")
         self.previousAudit["author"] = author
         self.previousAudit["file_url"] = file_url
         self.previousAudit["tags"] = tags

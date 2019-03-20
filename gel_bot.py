@@ -30,6 +30,20 @@ gelbooruLimiter = UserLimiter()
 realbooruLimiter = UserLimiter()
 
 
+@bot.event
+async def on_message(message):
+    if message.author != bot.user:
+        if len(message.mentions) == 1:
+            if message.mentions[0] == bot.user:
+                if 'fuck you' in message.content:
+                    await message.channel.send("You're a piece of shit too.")
+                elif 'sex' in message.content:
+                    await message.channel.send("Be gentle okay? uwu")
+                else:
+                    await message.channel.send("I got summoned!")
+    await bot.process_commands(message)
+#      await bot.delete_message(message)
+
 @bot.command()
 async def bully(ctx, arg1):
     await ctx.send("{}, you're a freaky piece of trash.".format(arg1))
@@ -159,7 +173,12 @@ async def bye(ctx):
 
 @bot.command()
 async def tagStats(ctx):
-    print(ctx.message.content)
+    print(ctx.message.content) 
+
+
+@bot.command()
+async def gem(ctx):
+    await ctx.send(":gem:")
 
 
 bot.run(clientID)
