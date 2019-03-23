@@ -15,6 +15,7 @@ from UserCollection import UserCollection
 from UserStatTracker import UserStatTracker
 from auditor import Auditor
 from UserLimiter import UserLimiter
+from timeKeeper import Timekeeper
 
 configFile = open('token.config', 'r')
 clientID = configFile.readline()
@@ -28,6 +29,8 @@ users = UserCollection(auditLines)
 userStats = UserStatTracker(users.getUsers(), auditLines)
 gelbooruLimiter = UserLimiter()
 realbooruLimiter = UserLimiter()
+uptimeTracker = Timekeeper()
+
 
 
 @bot.event
@@ -45,11 +48,26 @@ async def on_message(message):
 #      await bot.delete_message(message)
 
 @bot.command()
+async def uptime(ctx):
+    await ctx.send("I have been working hard for {}".format(uptimeTracker.getUptime()))
+
+
+@bot.command()
+async def updog(ctx):
+    await ctx.send("What's up dog? " + ctx.message.author.mention)
+
+# @bot.command()
+# async def 
+
+@bot.command()
 async def bully(ctx, arg1):
     await ctx.send("{}, you're a freaky piece of trash.".format(arg1))
 
 @bot.command()
 async def kona(ctx, *, arg):
+    if(ctx.channel.is_nsfw()):
+        await ctx.send("Can't do that on a SFW channel!")
+        return False
     caller = KonachanCaller(ctx, arg)
     caller.setArgs()
     caller.makeRequest()
@@ -113,6 +131,9 @@ async def stats(ctx):
 
 @bot.command()
 async def gel(ctx, *, arg):
+    if(not ctx.channel.is_nsfw()):
+        await ctx.send("Can't do that on a SFW channel!")
+        return False
     userLimited = True
     if(gelbooruLimiter.checkIfLimited(str(ctx.message.author)) == False):
         userLimited = False
