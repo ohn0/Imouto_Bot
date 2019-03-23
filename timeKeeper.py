@@ -9,3 +9,6 @@ class Timekeeper:
     def getUptime(self):
         currentTime = datetime.datetime.now()
         return abs(currentTime - self.startTime)
+
+    def getStartTime(self):
+        return self.startTime

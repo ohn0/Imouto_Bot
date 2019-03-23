@@ -16,6 +16,7 @@ from UserStatTracker import UserStatTracker
 from auditor import Auditor
 from UserLimiter import UserLimiter
 from timeKeeper import Timekeeper
+from filter import Filter
 
 configFile = open('token.config', 'r')
 clientID = configFile.readline()
@@ -30,7 +31,7 @@ userStats = UserStatTracker(users.getUsers(), auditLines)
 gelbooruLimiter = UserLimiter()
 realbooruLimiter = UserLimiter()
 uptimeTracker = Timekeeper()
-
+filter = Filter()
 
 
 @bot.event
@@ -47,23 +48,33 @@ async def on_message(message):
     await bot.process_commands(message)
 #      await bot.delete_message(message)
 
-@bot.command()
+# @bot.command()
+# async def 
+
+@bot.command(brief='get uptime and startime', description='Gets the uptime and startime in UTC.')
 async def uptime(ctx):
-    await ctx.send("I have been working hard for {}".format(uptimeTracker.getUptime()))
+    await ctx.send("I have been working hard for {}\nI was born on {}".format(uptimeTracker.getUptime(), uptimeTracker.getStartTime()))
 
+@bot.command(brief='uwu')
+async def piss(ctx):
+    await ctx.send("on me? ówò")
 
-@bot.command()
+@bot.command(brief='why is this here', description='fuck you, hash')
 async def updog(ctx):
     await ctx.send("What's up dog? " + ctx.message.author.mention)
 
 # @bot.command()
 # async def 
 
-@bot.command()
+@bot.command(brief='bully a member')
 async def bully(ctx, arg1):
     await ctx.send("{}, you're a freaky piece of trash.".format(arg1))
 
 @bot.command()
+async def bannedWords(ctx):
+    print(str(filter.getBannedWords()))
+
+@bot.command(brief='Gets an image from konachan', description='Gets an image from konachan,an imageboard with anime wallpapers. NSFW')
 async def kona(ctx, *, arg):
     if(ctx.channel.is_nsfw()):
         await ctx.send("Can't do that on a SFW channel!")
@@ -83,6 +94,10 @@ async def kona(ctx, *, arg):
         await ctx.send("Those tags returned no images, what's wrong with you " + ctx.message.author.mention)
 
 @bot.command()
+async def getctx(ctx):
+    await ctx.send(str(ctx.guild.id) + ', ' + str(ctx.guild.name))
+
+@bot.command(brief='gets an image from yande.re, an imageboard with highres scans. NSFW')
 async def yan(ctx, *, arg):
     caller = YandereCaller(ctx, arg)
     caller.setArgs()
@@ -98,7 +113,7 @@ async def yan(ctx, *, arg):
     else:
         await ctx.send("Those tags returned no images, what's wrong with you " + ctx.message.author.mention)
 
-@bot.command()
+@bot.command(brief='gets an image from safebooru, an imageboard consisting of SFW anime images.')
 async def sfw(ctx, *, arg):
     caller = sfwCaller(ctx, arg)
     caller.setArgs()
@@ -118,7 +133,7 @@ async def sfw(ctx, *, arg):
         await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
 
 
-@bot.command()
+@bot.command(brief='gets a list of users that have most heavily made successful requests to the bot.')
 async def stats(ctx):
     currentStats = userStats.getStats()
     sortedStats = sorted(currentStats.items(), key=lambda x: x[1],reverse=True)
@@ -129,11 +144,16 @@ async def stats(ctx):
     statMessage += "--------------------------```"
     await ctx.send(statMessage)
 
-@bot.command()
+@bot.command(brief='gets an image from Gelbooru, an imageboard that contains a massive collection of anime images, very NSFW')
 async def gel(ctx, *, arg):
     if(not ctx.channel.is_nsfw()):
         await ctx.send("Can't do that on a SFW channel!")
         return False
+
+    if not filter.isArgClean(arg.split(' ')):
+        await ctx.send("Your request contained a banned tag")
+        return False
+    
     userLimited = True
     if(gelbooruLimiter.checkIfLimited(str(ctx.message.author)) == False):
         userLimited = False
@@ -156,7 +176,7 @@ async def gel(ctx, *, arg):
     else:
         await ctx.send("You just made a request! Your little sister can only do so much uwu " + ctx.message.author.mention)
 
-@bot.command()
+@bot.command(brief='It\' a traaaaap', description='Gets an image from realbooru, NSFW')
 async def real(ctx, *, arg):
     userLimited = True
     if(realbooruLimiter.checkIfLimited(str(ctx.message.author)) == False):
@@ -180,24 +200,24 @@ async def real(ctx, *, arg):
         await ctx.send("You just made a request! Your little sister can only do so much uwu " + ctx.message.author.mention)
         
 
-@bot.command()
+@bot.command(brief='gets the tags for the last image posted by the bot.')
 async def prev(ctx):
     lastAudit = auditor.getLastAudit()
     await ctx.send('This was the last request I successfully completed!'+
         '\nRequestor: {}\nfile_url: `{}`\ntags: {}'.format(lastAudit["author"], lastAudit["file_url"], lastAudit["tags"]))
 
 
-@bot.command()
+@bot.command(brief='bot will disconnect')
 async def bye(ctx):
     await ctx.send("Y'all freaking me out too much, I'm out.")
     await bot.logout()
 
-@bot.command()
+@bot.command(brief='unused atm')
 async def tagStats(ctx):
     print(ctx.message.content) 
 
 
-@bot.command()
+@bot.command(brief='prints a gem')
 async def gem(ctx):
     await ctx.send(":gem:")
 
