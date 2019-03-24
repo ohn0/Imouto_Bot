@@ -87,7 +87,7 @@ async def bannedWords(ctx):
 
 @bot.command(brief='Gets an image from konachan', description='Gets an image from konachan,an imageboard with anime wallpapers. NSFW')
 async def kona(ctx, *, arg):
-    if(ctx.channel.is_nsfw()):
+    if(not ctx.channel.is_nsfw()):
         await ctx.send("Can't do that on a SFW channel!")
         return False
     caller = KonachanCaller(ctx, arg)
@@ -96,7 +96,7 @@ async def kona(ctx, *, arg):
     response = caller.getContent()
 
     if response != None:
-        auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1])
+        auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "konachan")
         userStats.updateStats(str(ctx.message.author))
         await ctx.send(response["response"])
         if(response["sendTags"]):
@@ -116,7 +116,7 @@ async def yan(ctx, *, arg):
     response = caller.getContent()
 
     if response != None:
-        auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1])
+        auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "yandere")
         userStats.updateStats(str(ctx.message.author))
         await ctx.send(response["response"])
         if(response["sendTags"]):
@@ -134,7 +134,7 @@ async def sfw(ctx, *, arg):
 
     if response != None:
         # await ctx.send("ping")
-        auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1])
+        auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "safebooru")
         userStats.updateStats(str(ctx.message.author))
         await ctx.send(response["response"])
         if(response["sendTags"]):
@@ -178,7 +178,7 @@ async def gel(ctx, *, arg):
 
     if not userLimited:
         if response != None:
-            auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1])
+            auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "gelbooru")
             await ctx.send(response["response"])
             userStats.updateStats(str(ctx.message.author))
             if(response["sendTags"]):
@@ -200,7 +200,7 @@ async def real(ctx, *, arg):
     response = caller.getContent()
     if not userLimited:
         if response != None:
-            auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1])
+            auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "realbooru")
             await ctx.send(response["response"])
             userStats.updateStats(str(ctx.message.author))
             if(response["sendTags"]):
