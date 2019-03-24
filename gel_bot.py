@@ -35,6 +35,18 @@ uptimeTracker = Timekeeper()
 ChannelFilter = Filter()
 ClientConnector = ClientConnections()
 
+async def isChannelNSFW(ctx):
+    isNSFW = ctx.channel.is_nsfw()
+    if not isNSFW:
+        await ctx.send("Can't do that on a SFW channel!")
+    return isNSFW
+
+def isExplicitlyFiltered(ctx, arg):
+    if(ClientConnector.isChannelFiltered(ctx.guild.id)):
+        if not ChannelFilter.isArgClean(arg.split(' ')):
+            return True
+    return False
+    
 
 @bot.event
 async def on_message(message):
@@ -86,14 +98,16 @@ async def bannedWords(ctx):
     print(str(ChannelFilter.getBannedWords()))
 
 @bot.command(brief='Gets an image from konachan', description='Gets an image from konachan,an imageboard with anime wallpapers. NSFW')
+@commands.check(isChannelNSFW)
 async def kona(ctx, *, arg):
-    if(not ctx.channel.is_nsfw()):
-        await ctx.send("Can't do that on a SFW channel!")
+    if isExplicitlyFiltered(ctx, arg):
+        await ctx.send("Invalid tag entered in request.")
         return False
     caller = KonachanCaller(ctx, arg)
     caller.setArgs()
     caller.makeRequest()
     response = caller.getContent()
+
 
     if response != None:
         auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "konachan")
@@ -109,7 +123,11 @@ async def getctx(ctx):
     await ctx.send(str(ctx.guild.id) + ', ' + str(ctx.guild.name))
 
 @bot.command(brief='gets an image from yande.re, an imageboard with highres scans. NSFW')
+@commands.check(isChannelNSFW)
 async def yan(ctx, *, arg):
+    if isExplicitlyFiltered(ctx, arg):
+        await ctx.send("Invalid tag entered in request.")
+        return False
     caller = YandereCaller(ctx, arg)
     caller.setArgs()
     caller.makeRequest()
@@ -156,15 +174,17 @@ async def stats(ctx):
     await ctx.send(statMessage)
 
 @bot.command(brief='gets an image from Gelbooru, an imageboard that contains a massive collection of anime images, very NSFW')
+@commands.check(isChannelNSFW)
 async def gel(ctx, *, arg):
-    if(not ctx.channel.is_nsfw()):
-        await ctx.send("Can't do that on a SFW channel!")
-        return False
 
+    if isExplicitlyFiltered(ctx, arg):
+        await ctx.send("Invalid tag entered in request.")
+        return False
+        
     if(ClientConnector.isChannelFiltered(ctx.guild.id)):
         if not ChannelFilter.isArgClean(arg.split(' ')):
             await ctx.send("Your request contained a banned tag")
-            return False
+            return False #breaks out from executing the command any further
     
     userLimited = True
     if(gelbooruLimiter.checkIfLimited(str(ctx.message.author)) == False):
@@ -188,8 +208,12 @@ async def gel(ctx, *, arg):
     else:
         await ctx.send("You just made a request! Your little sister can only do so much uwu " + ctx.message.author.mention)
 
-@bot.command(brief='It\' a traaaaap', description='Gets an image from realbooru, NSFW')
+@bot.command(brief='It\'s a traaaaap', description='Gets an image from realbooru, NSFW')
+@commands.check(isChannelNSFW)
 async def real(ctx, *, arg):
+    if isExplicitlyFiltered(ctx, arg):
+        await ctx.send("Invalid tag entered in request.")
+        return False
     userLimited = True
     if(realbooruLimiter.checkIfLimited(str(ctx.message.author)) == False):
         userLimited = False
@@ -221,6 +245,9 @@ async def prev(ctx):
 
 @bot.command(brief='bot will disconnect')
 async def bye(ctx):
+    if not ctx.author.guild_permissions.ban_members:
+        await ctx.send("You can't run that command.")
+        return False
     ClientConnector.writeServerToggleStatus()
     await ctx.send("Y'all freaking me out too much, I'm out.")
     await bot.logout()
@@ -237,11 +264,22 @@ async def gem(ctx):
 
 @bot.command(brief='turns on the ChannelFilter')
 async def toggleFilter(ctx):
+    if not ctx.author.guild_permissions.ban_members:
+        await ctx.send("You can't run that command.")
+        return False
+
     filterStatus = ClientConnector.toggleFilter(ctx.guild.id)
     
     if filterStatus:
         await ctx.send("Really naughty tags have been disabled for " + ctx.guild.name)
     else:
         await ctx.send("Really naughty tags have been enabled for " + ctx.guild.name + ". oh no!")
+
+
+@bot.command()
+async def perm(ctx):
+    userPermissions = ctx.author.guild_permissions
+    await ctx.send(userPermissions.administrator)
+
 
 bot.run(clientID)
