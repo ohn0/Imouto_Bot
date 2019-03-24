@@ -32,7 +32,7 @@ class ClientConnections:
         sclientID = str(clientID)
         if sclientID in self.connectedClients:
             return False
-        self.serverFile = open('activeservers.txt', 'r')
+        self.serverFile = open('activeservers.txt', 'a')
         self.serverFile.write(sclientID + ' 1\n')
         self.serverFile.close()
 
