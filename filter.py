@@ -1,5 +1,6 @@
 class Filter():
     filteredWords = []
+
     def __init__(self):
         filterFile = open('filter.txt', 'r')
         for f in filterFile:
@@ -13,5 +14,6 @@ class Filter():
         for arg in args:
             if arg in self.filteredWords:
                 return False
-
         return True
+
+    

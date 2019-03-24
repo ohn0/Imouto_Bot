@@ -17,6 +17,7 @@ from auditor import Auditor
 from UserLimiter import UserLimiter
 from timeKeeper import Timekeeper
 from filter import Filter
+from clientConnections import ClientConnections
 
 configFile = open('token.config', 'r')
 clientID = configFile.readline()
@@ -31,7 +32,8 @@ userStats = UserStatTracker(users.getUsers(), auditLines)
 gelbooruLimiter = UserLimiter()
 realbooruLimiter = UserLimiter()
 uptimeTracker = Timekeeper()
-filter = Filter()
+ChannelFilter = Filter()
+ClientConnector = ClientConnections()
 
 
 @bot.event
@@ -47,6 +49,15 @@ async def on_message(message):
                     await message.channel.send("I got summoned!")
     await bot.process_commands(message)
 #      await bot.delete_message(message)
+
+
+@bot.event
+async def on_ready():
+    print(ClientConnector.getConnectedServer())
+
+@bot.event
+async def on_guild_join(guild):
+    ClientConnector.updateConnectedClients(guild.id)
 
 # @bot.command()
 # async def 
@@ -72,7 +83,7 @@ async def bully(ctx, arg1):
 
 @bot.command()
 async def bannedWords(ctx):
-    print(str(filter.getBannedWords()))
+    print(str(ChannelFilter.getBannedWords()))
 
 @bot.command(brief='Gets an image from konachan', description='Gets an image from konachan,an imageboard with anime wallpapers. NSFW')
 async def kona(ctx, *, arg):
@@ -150,9 +161,10 @@ async def gel(ctx, *, arg):
         await ctx.send("Can't do that on a SFW channel!")
         return False
 
-    if not filter.isArgClean(arg.split(' ')):
-        await ctx.send("Your request contained a banned tag")
-        return False
+    if(ClientConnector.isChannelFiltered(ctx.guild.id)):
+        if not ChannelFilter.isArgClean(arg.split(' ')):
+            await ctx.send("Your request contained a banned tag")
+            return False
     
     userLimited = True
     if(gelbooruLimiter.checkIfLimited(str(ctx.message.author)) == False):
@@ -209,8 +221,10 @@ async def prev(ctx):
 
 @bot.command(brief='bot will disconnect')
 async def bye(ctx):
+    ClientConnector.writeServerToggleStatus()
     await ctx.send("Y'all freaking me out too much, I'm out.")
     await bot.logout()
+    await bot.close()
 
 @bot.command(brief='unused atm')
 async def tagStats(ctx):
@@ -221,6 +235,13 @@ async def tagStats(ctx):
 async def gem(ctx):
     await ctx.send(":gem:")
 
+@bot.command(brief='turns on the ChannelFilter')
+async def toggleFilter(ctx):
+    filterStatus = ClientConnector.toggleFilter(ctx.guild.id)
+    
+    if filterStatus:
+        await ctx.send("Really naughty tags have been disabled for " + ctx.guild.name)
+    else:
+        await ctx.send("Really naughty tags have been enabled for " + ctx.guild.name + ". oh no!")
 
 bot.run(clientID)
-
