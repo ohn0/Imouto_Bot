@@ -1,3 +1,8 @@
+Test server:
+https://discord.gg/2Eytgk3
+Come mess around with the bot!
+
+
 # Imouto_Bot
 A discord bot that pulls images from various boorus.
 
