@@ -273,8 +273,23 @@ async def toggleFilter(ctx):
         await ctx.send("Really naughty tags have been enabled for " + ctx.guild.name + ". oh no!")
 
 
-@bot.command(brief='Info about bot creator and github link.')
+@bot.command(brief='Info about bot and usage.')
 async def about(ctx):
     await ctx.send("Here's a github with more info about myself!\nhttps://github.com/ohn0/Imouto_Bot")
-
+    await ctx.send('''
+$gel <arg1> <arg2> <arg3>
+$kona <arg1> ...
+$yan  <arg1> ...
+$sfw  <arg1> ...
+$real <arg1> ...
+if the arg is multiple words, replace spaces with '_'
+ex: 'black lagoon' -> black_lagoon
+can add multiple tags separated by space
+ex: $gel azur_lane swimsuit beach
+$gel searches gelbooru,  hentai pics
+$kona searches konachan, anime wallpapers
+$yan searches yande.re,  highres images and artbook scans
+$sfw searches safebooru, SFW anime images
+$real searches realbooru, traps galore 
+''')
 bot.run(clientID)
