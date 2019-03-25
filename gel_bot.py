@@ -118,9 +118,6 @@ async def kona(ctx, *, arg):
     else:
         await ctx.send("Those tags returned no images, what's wrong with you " + ctx.message.author.mention)
 
-@bot.command()
-async def getctx(ctx):
-    await ctx.send(str(ctx.guild.id) + ', ' + str(ctx.guild.name))
 
 @bot.command(brief='gets an image from yande.re, an imageboard with highres scans. NSFW')
 @commands.check(isChannelNSFW)
@@ -276,10 +273,8 @@ async def toggleFilter(ctx):
         await ctx.send("Really naughty tags have been enabled for " + ctx.guild.name + ". oh no!")
 
 
-@bot.command()
-async def perm(ctx):
-    userPermissions = ctx.author.guild_permissions
-    await ctx.send(userPermissions.administrator)
-
+@bot.command(brief='Info about bot creator and github link.')
+async def about(ctx):
+    await ctx.send("Here's a github with more info about myself!\nhttps://github.com/ohn0/Imouto_Bot")
 
 bot.run(clientID)
