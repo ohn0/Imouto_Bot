@@ -100,12 +100,15 @@ async def bannedWords(ctx):
 @bot.command(brief='Gets an image from konachan', description='Gets an image from konachan,an imageboard with anime wallpapers. NSFW')
 @commands.check(isChannelNSFW)
 async def kona(ctx, *, arg):
-    if isExplicitlyFiltered(ctx, arg):
-        await ctx.send("Invalid tag entered in request.")
-        return False
+    extremeFiltering = False
+    if(ClientConnector.isChannelFiltered(ctx.guild.id)):
+        extremeFiltering = True
+        if not ChannelFilter.isArgClean(arg.split(' ')):
+            await ctx.send("Your request contained a banned tag")
+            return False #breaks out from executing the command any further
     caller = KonachanCaller(ctx, arg)
     caller.setArgs()
-    caller.makeRequest()
+    caller.makeRequest(extremeFiltering)
     response = caller.getContent()
 
 
@@ -122,12 +125,15 @@ async def kona(ctx, *, arg):
 @bot.command(brief='gets an image from yande.re, an imageboard with highres scans. NSFW')
 @commands.check(isChannelNSFW)
 async def yan(ctx, *, arg):
-    if isExplicitlyFiltered(ctx, arg):
-        await ctx.send("Invalid tag entered in request.")
-        return False
+    extremeFiltering = False
+    if(ClientConnector.isChannelFiltered(ctx.guild.id)):
+        extremeFiltering = True
+        if not ChannelFilter.isArgClean(arg.split(' ')):
+            await ctx.send("Your request contained a banned tag")
+            return False #breaks out from executing the command any further
     caller = YandereCaller(ctx, arg)
     caller.setArgs()
-    caller.makeRequest()
+    caller.makeRequest(extremeFiltering)
     response = caller.getContent()
 
     if response != None:
@@ -173,12 +179,13 @@ async def stats(ctx):
 @bot.command(brief='gets an image from Gelbooru, an imageboard that contains a massive collection of anime images, very NSFW')
 @commands.check(isChannelNSFW)
 async def gel(ctx, *, arg):
-
-    if isExplicitlyFiltered(ctx, arg):
-        await ctx.send("Invalid tag entered in request.")
-        return False
+    extremeFiltering = False
+    # if isExplicitlyFiltered(ctx, arg):
+    #     await ctx.send("Invalid tag entered in request.")
+    #     return False
         
     if(ClientConnector.isChannelFiltered(ctx.guild.id)):
+        extremeFiltering = True
         if not ChannelFilter.isArgClean(arg.split(' ')):
             await ctx.send("Your request contained a banned tag")
             return False #breaks out from executing the command any further
@@ -190,7 +197,7 @@ async def gel(ctx, *, arg):
 
     caller = gelbooruCaller(ctx, arg)
     caller.setArgs()
-    caller.makeRequest()
+    caller.makeRequest(extremeFiltering)
     response = caller.getContent()
 
     if not userLimited:

@@ -9,14 +9,18 @@ class KonachanCaller(booruComm):
         super().__init__(ctx, args)
         self.apicall = booruLib.apiEndpoints[booruLib.KONACHAN]
         self.instance = "KONACHAN"
+        self.filteredTags = "+-loli+-lolicon+-shotacon+-guro+-bestiality"
 
 
     def setArgs(self):
         self.splitArgs()
 
-    def resolveResponse(self):
+    def resolveResponse(self, extremeFilteringEnabled):
         try:
-            self.apicall += "200&tags="+self.tagList
+            if extremeFilteringEnabled:
+                self.apicall += "200&tags="+self.tagList
+            else:
+                self.apicall += "200&tags="
             self.response = requests.get(self.apicall)
             self.response = self.response.json()
             responseLength = len(self.response)
@@ -27,8 +31,8 @@ class KonachanCaller(booruComm):
         except json.decoder.JSONDecodeError:
             self.imageReturned = False
 
-    def makeRequest(self):
-        self.resolveResponse()
+    def makeRequest(self, extremeFilteringEnabled = False):
+        self.resolveResponse(extremeFilteringEnabled)
 
     def getContent(self):
         content = self.resolveContent()

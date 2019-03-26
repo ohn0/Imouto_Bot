@@ -23,7 +23,13 @@ class ClientConnections:
         serverFile.close()
 
     def isChannelFiltered(self, guildID):
-        return self.clientFilterStatus[str(guildID)]
+        try:
+            filterStatus = self.clientFilterStatus[str(guildID)]
+        except KeyError:
+            self.updateConnectedClients(guildID)
+            return True
+        return filterStatus
+        # return self.clientFilterStatus[str(guildID)]
 
     def getConnectedServer(self):
         return self.clientFilterStatus
@@ -35,6 +41,8 @@ class ClientConnections:
         self.serverFile = open('activeservers.txt', 'a')
         self.serverFile.write(sclientID + ' 1\n')
         self.serverFile.close()
+
+        self.clientFilterStatus[sclientID] = True
 
     def toggleFilter(self, clientID):
         sclientID = str(clientID)
