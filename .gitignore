@@ -1,4 +1,5 @@
 audit.txt
 tag.txt
 token.config
+*.pyc
 __pycache__/
