@@ -2,6 +2,8 @@ Test server:
 https://discord.gg/2Eytgk3
 Come mess around with the bot!
 
+Invite the bot to your server:
+https://discordapp.com/api/oauth2/authorize?client_id=526504376853069845&permissions=0&scope=bot
 
 # Imouto_Bot
 A discord bot that pulls images from various boorus.
