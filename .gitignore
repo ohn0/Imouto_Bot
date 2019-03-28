@@ -3,3 +3,7 @@ tag.txt
 token.config
 *.pyc
 __pycache__/
+*.jpg
+*.png
+*.gif
+*.jpeg

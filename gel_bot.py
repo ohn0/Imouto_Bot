@@ -18,6 +18,7 @@ from UserLimiter import UserLimiter
 from timeKeeper import Timekeeper
 from filter import Filter
 from clientConnections import ClientConnections
+from asciiConverter import asciiConverter
 
 configFile = open('token.config', 'r')
 clientID = configFile.readline()
@@ -34,6 +35,7 @@ realbooruLimiter = UserLimiter()
 uptimeTracker = Timekeeper()
 ChannelFilter = Filter()
 ClientConnector = ClientConnections()
+
 
 async def isChannelNSFW(ctx):
     isNSFW = ctx.channel.is_nsfw()
@@ -299,4 +301,25 @@ $yan searches yande.re,  highres images and artbook scans
 $sfw searches safebooru, SFW anime images
 $real searches realbooru, traps galore 
 ''')
+
+@bot.command(brief='send an image file.')
+async def send(ctx):
+    try:
+        #await ctx.send("lol fuck you, I'm not saving shit anymore you freak {}".format(ctx.message.author.mention))
+        bytesSaved = await ctx.message.attachments[0].save(ctx.message.attachments[0].filename)
+        AsciiConverter = asciiConverter()
+        grayImage = AsciiConverter.convertToGrayscale(ctx.message.attachments[0].filename)
+        #TODO: show message that save was completed.
+        if bytesSaved > 0:
+            grayscaleImg = open(grayImage,'rb')
+            await ctx.send("Here you go, bitch, {}".format(ctx.message.author.mention), file=discord.File(grayscaleImg))
+    except discord.NotFound:
+        await ctx.send("File was deleted before I could save it!")
+    except discord.HTTPException:
+        await ctx.send("Saving the file failed.")
+
+    
+
+
+
 bot.run(clientID)
