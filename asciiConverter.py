@@ -10,8 +10,11 @@ class asciiConverter:
     def convertToGrayscale(self,filename):
         grayscaleFilename = filename[0:-3]+"_Grayscale."+filename[-3:]
         self.img = Image.open(filename).convert('LA').convert('RGB')
+        avenge = Image.open('avenge.png')
+        self.img.paste(avenge, (0,0), avenge)
         self.img.save(grayscaleFilename)
         return grayscaleFilename
+
 
 
         
