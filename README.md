@@ -5,6 +5,14 @@ Come mess around with the bot!
 Invite the bot to your server:
 https://discordapp.com/api/oauth2/authorize?client_id=526504376853069845&permissions=0&scope=bot
 
+
+Running your own instance:
+Have a discord app configured and a bot added.
+Invite the bot to your channel
+Copy the 'token' value  into a token.config file.
+Run gel_bot.py
+
+
 # Imouto_Bot
 A discord bot that pulls images from various boorus.
 
