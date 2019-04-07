@@ -101,10 +101,3 @@ class asciiConverter:
             asciiOutput += '\n'
 
         return asciiOutput
-
-a = Image.open('1418950073149.png')
-aCrop = a.crop((0,0,20,20))
-
-aCon = asciiConverter()
-aCropGray = aCon.createGrayscaleImage('1418950073149.png')
-print(aCon.splitToBlocks(aCropGray))
