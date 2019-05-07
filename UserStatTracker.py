@@ -21,6 +21,7 @@ class UserStatTracker:
 
     def updateStats(self, user):
         tUser = user[0:-5]
+        print("Logging " + user + " as " + tUser)
         self.userStats.setdefault(tUser)
 
         if self.userStats[tUser] == None:
