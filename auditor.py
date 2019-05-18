@@ -1,8 +1,10 @@
 import datetime
+
 class Auditor:
     textFile = None
     auditLines = []
     filename = ""
+    responseAuditor = None
     previousAudit = {"author": None,
                      "file_url": None,
                      "tags": None}

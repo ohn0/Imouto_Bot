@@ -13,6 +13,8 @@ class realbooruCaller(booruComm):
 
     def makeRequest(self):
         self.resolveResponse()
+        self.auditEntireResponse()
+
 
     def buildURL(self, imageNum):
         response = self.getResponse()

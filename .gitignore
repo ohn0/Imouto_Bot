@@ -8,3 +8,5 @@ __pycache__/
 *.gif
 *.jpeg
 activeservers.txt
+botConfig
+responseAuditor

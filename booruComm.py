@@ -1,5 +1,6 @@
 from booruLib import booruLib
 from TagStatTracker import tag, TagStatTracker
+import responseAuditor
 import discord
 from discord.ext import commands
 import os
@@ -19,6 +20,8 @@ class booruComm:
     sendTags = False
     apicall = ""
     response = None
+    responseAuditor = None
+
     def __init__(self, ctx, args):
         self.argList = args.split(" ")
         self.tagLogger = []
@@ -30,6 +33,7 @@ class booruComm:
         self.ctx = ctx
         self.params = []
         self.instance = ""
+        self.responseAuditor = responseAuditor.ResponseAuditor("responseAuditor")
 
     def splitArgs(self):
         for arg in self.argList:
@@ -49,6 +53,9 @@ class booruComm:
         tagEntry.updateTagFile(tag(self.tagLogger, self.instance,str(self.ctx.message.author)))
 
         self.tagList = self.tagList[0: len(self.tagList)-1]
+
+    def auditEntireResponse(self):
+        self.responseAuditor.auditResponse(self.response, str(self.ctx.message.author))
 
     def resolveResponse(self):
         try:
