@@ -4,10 +4,16 @@ import random
 
 class realbooruCaller(booruComm):
     baseURL = "https://realbooru.com//images/"
-    def __init__(self, ctx, args):
+    def __init__(self, ctx, callingInstance, args):
         super().__init__(ctx, args)
-        self.apicall = booruLib.apiEndpoints[booruLib.REALBOORU]
-        self.instance = "REALBOORU"
+        self.apicall = booruLib.apiEndpoints[callingInstance]
+        self.instance = callingInstance
+
+        if self.instance == booruLib.R34:
+            self.baseURL = "https://rule34.xxx//images/"
+        elif self.instance == booruLib.XBOORU:
+            self.baseURL = "https://xbooru.com//images/"
+
     def setArgs(self):
         self.splitArgs()
 

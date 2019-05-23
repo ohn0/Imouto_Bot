@@ -9,7 +9,7 @@ class TagStatTracker:
 
     def updateTagFile(self, tag):
         self.tagFile = open("tag.txt", 'a')
-        self.tagFile.write(str(tag.tag["tag"]) + "\t" + str(tag.tag["site"] + "\t" + tag.tag["requestor"]+ str(datetime.datetime.now())+ "\n"))
+        # self.tagFile.write(str(tag.tag["tag"]) + "\t" + str(tag.tag["site"] + "\t" + tag.tag["requestor"]+ str(datetime.datetime.now())+ "\n"))
         self.tagFile.close()
 
     

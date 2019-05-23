@@ -4,11 +4,11 @@ import requests
 import json
 import random
 
-class KonachanCaller(booruComm):
-    def __init__(self, ctx, args):
+class aggregateCaller(booruComm):
+    def __init__(self, ctx, callingInstance, args):
         super().__init__(ctx, args)
-        self.apicall = booruLib.apiEndpoints[booruLib.KONACHAN]
-        self.instance = "KONACHAN"
+        self.instance = callingInstance
+        self.apicall = booruLib.apiEndpoints[callingInstance]
         self.filteredTags = "+-loli+-lolicon+-shotacon+-guro+-bestiality"
 
 
@@ -18,9 +18,10 @@ class KonachanCaller(booruComm):
     def resolveResponse(self, extremeFilteringEnabled):
         try:
             if extremeFilteringEnabled:
-                self.apicall += "200&tags="+self.tagList
+                self.apicall += "100&tags="+self.tagList
             else:
-                self.apicall += "200&tags="
+                self.apicall += "100&tags="
+            print(self.apicall)
             self.response = requests.get(self.apicall)
             self.response = self.response.json()
             responseLength = len(self.response)

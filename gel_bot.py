@@ -10,12 +10,13 @@ from gelbooruCaller import gelbooruCaller
 from realbooruCaller import realbooruCaller
 from sfwCaller import sfwCaller
 from yandereCaller import YandereCaller
-from konachanCaller import KonachanCaller
+from konachanCaller import aggregateCaller
 from UserCollection import UserCollection
 from UserStatTracker import UserStatTracker
 from auditor import Auditor
 from UserLimiter import UserLimiter
 from timeKeeper import Timekeeper
+from booruLib import booruLib
 from filter import Filter
 from clientConnections import ClientConnections
 from asciiConverter import asciiConverter
@@ -108,7 +109,7 @@ async def kona(ctx, *, arg):
         if not ChannelFilter.isArgClean(arg.split(' ')):
             await ctx.send("Your request contained a banned tag")
             return False #breaks out from executing the command any further
-    caller = KonachanCaller(ctx, arg)
+    caller = aggregateCaller(ctx, booruLib.KONACHAN, arg)
     caller.setArgs()
     caller.makeRequest(extremeFiltering)
     response = caller.getContent()
@@ -122,6 +123,62 @@ async def kona(ctx, *, arg):
             await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
     else:
         await ctx.send("Those tags returned no images, what's wrong with you " + ctx.message.author.mention)
+
+@bot.command()
+@commands.check(isChannelNSFW)
+async def xxx(ctx, *, arg):
+    if isExplicitlyFiltered(ctx, arg):
+        await ctx.send("Invalid tag entered in request.")
+        return False
+    userLimited = True
+    if(realbooruLimiter.checkIfLimited(str(ctx.message.author)) == False):
+        userLimited = False
+        realbooruLimiter.limitUser(str(ctx.message.author))
+    caller = realbooruCaller(ctx, booruLib.XBOORU ,arg)
+    caller.setArgs()
+    caller.makeRequest()
+    response = caller.getContent()
+    if not userLimited:
+        if response != None:
+            auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "realbooru")
+            await ctx.send(response["response"])
+            userStats.updateStats(str(ctx.message.author))
+            if(response["sendTags"]):
+                await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
+
+        else:
+            await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
+    else:
+        await ctx.send("You just made a request! Your little sister can only do so much uwu " + ctx.message.author.mention)
+
+@bot.command()
+@commands.check(isChannelNSFW)
+async def r34(ctx, *, arg):
+    if isExplicitlyFiltered(ctx, arg):
+        await ctx.send("Invalid tag entered in request.")
+        return False
+    userLimited = True
+    if(realbooruLimiter.checkIfLimited(str(ctx.message.author)) == False):
+        userLimited = False
+        realbooruLimiter.limitUser(str(ctx.message.author))
+    caller = realbooruCaller(ctx, booruLib.R34 ,arg)
+    caller.setArgs()
+    caller.makeRequest()
+    response = caller.getContent()
+    if not userLimited:
+        if response != None:
+            auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "realbooru")
+            await ctx.send(response["response"])
+            userStats.updateStats(str(ctx.message.author))
+            if(response["sendTags"]):
+                await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
+
+        else:
+            await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
+    else:
+        await ctx.send("You just made a request! Your little sister can only do so much uwu " + ctx.message.author.mention)
+        
+
 
 
 @bot.command(brief='gets an image from yande.re, an imageboard with highres scans. NSFW')
@@ -224,7 +281,7 @@ async def real(ctx, *, arg):
     if(realbooruLimiter.checkIfLimited(str(ctx.message.author)) == False):
         userLimited = False
         realbooruLimiter.limitUser(str(ctx.message.author))
-    caller = realbooruCaller(ctx, arg)
+    caller = realbooruCaller(ctx, booruLib.REALBOORU ,arg)
     caller.setArgs()
     caller.makeRequest()
     response = caller.getContent()
