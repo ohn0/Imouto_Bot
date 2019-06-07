@@ -24,7 +24,8 @@ from asciiConverter import asciiConverter
 configFile = open('token.config', 'r')
 clientID = configFile.readline()
 configFile.close()
-bot = commands.Bot(command_prefix='$', case_insensitive=True)
+bot = commands.Bot(command_prefix='^', case_insensitive=True)
+bot.remove_command('help')
 
 auditor = Auditor("audit.txt")
 auditor.generateAuditLog()
