@@ -344,20 +344,20 @@ async def toggleFilter(ctx):
 async def about(ctx):
     await ctx.send("Here's a github with more info about myself!\nhttps://github.com/ohn0/Imouto_Bot")
     await ctx.send('''
-$gel <arg1> <arg2> <arg3>
-$kona <arg1> ...
-$yan  <arg1> ...
-$sfw  <arg1> ...
-$real <arg1> ...
+^gel <arg1> <arg2> <arg3>
+^kona <arg1> ...
+^yan  <arg1> ...
+^sfw  <arg1> ...
+^real <arg1> ...
 if the arg is multiple words, replace spaces with '_'
 ex: 'black lagoon' -> black_lagoon
 can add multiple tags separated by space
-ex: $gel azur_lane swimsuit beach
-$gel searches gelbooru,  hentai pics
-$kona searches konachan, anime wallpapers
-$yan searches yande.re,  highres images and artbook scans
-$sfw searches safebooru, SFW anime images
-$real searches realbooru, traps galore 
+ex: ^gel azur_lane swimsuit beach
+^gel searches gelbooru,  hentai pics
+^kona searches konachan, anime wallpapers
+^yan searches yande.re,  highres images and artbook scans
+^sfw searches safebooru, SFW anime images
+^real searches realbooru, traps galore 
 ''')
 
 @bot.command(brief='send an image file.')
