@@ -303,8 +303,8 @@ async def real(ctx, *, arg):
 @bot.command(brief='gets the tags for the last image posted by the bot.')
 async def prev(ctx):
     lastAudit = auditor.getLastAudit()
-    await ctx.send('This was the last request I successfully completed!'+
-        '\nRequestor: {}\nfile_url: `{}`\ntags: {}'.format(lastAudit["author"], lastAudit["file_url"], lastAudit["tags"]))
+    await ctx.send('```This was the last request I successfully completed!'+
+        '\nRequestor: {}\nfile_url: `{}`\ntags: {}```'.format(lastAudit["author"], lastAudit["file_url"], lastAudit["tags"]))
 
 
 @bot.command(brief='bot will disconnect')
