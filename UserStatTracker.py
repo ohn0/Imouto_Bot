@@ -17,7 +17,8 @@ class UserStatTracker:
         # print(str(users))
 
     def getStats(self):
-        return self.userStats
+        #return self.userStats
+        return {k:v for k,v in self.userStats.items() if v > 10}
 
     def updateStats(self, user):
         tUser = user[0:-5]
