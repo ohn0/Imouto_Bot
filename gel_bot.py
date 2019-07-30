@@ -234,6 +234,7 @@ async def stats(ctx):
         statMessage += ("{:<30} {:<30}\n".format(str(stat[0]), str(stat[1])))
 
     statMessage += "```"
+    print(statMessage)
     await ctx.send(statMessage)
 
 @bot.command(brief='gets an image from Gelbooru, an imageboard that contains a massive collection of anime images, very NSFW')
