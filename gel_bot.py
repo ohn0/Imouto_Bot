@@ -232,8 +232,9 @@ async def stats(ctx):
     statMessage = "```\n\nHow can you make a loli do this\n"
     for stat in sortedStats:
         statMessage += ("{:<30} {:<30}\n".format(str(stat[0]), str(stat[1])))
-
     statMessage += "```"
+    if len(statMessage) >= 2000:
+        statMessage = "There are too many people to display!"
     await ctx.send(statMessage)
 
 @bot.command(brief='gets an image from Gelbooru, an imageboard that contains a massive collection of anime images, very NSFW')
