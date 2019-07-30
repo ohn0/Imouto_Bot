@@ -229,11 +229,11 @@ async def sfw(ctx, *, arg):
 async def stats(ctx):
     currentStats = userStats.getStats()
     sortedStats = sorted(currentStats.items(), key=lambda x: x[1],reverse=True)
-    statMessage = "```\n--------------------------\nI've been listening to TWICE's LIKEY too much\n"
+    statMessage = "```\n\nHow can you make a loli do this\n"
     for stat in sortedStats:
         statMessage += ("{:<30} {:<30}\n".format(str(stat[0]), str(stat[1])))
 
-    statMessage += "--------------------------```"
+    statMessage += "```"
     await ctx.send(statMessage)
 
 @bot.command(brief='gets an image from Gelbooru, an imageboard that contains a massive collection of anime images, very NSFW')
