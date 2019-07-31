@@ -13,11 +13,8 @@ class UserStatTracker:
             name = splitLine[0][0:-5]
             self.userStats[name] += 1
 
-        # print(str(self.userStats))
-        # print(str(users))
 
     def getStats(self):
-        #return self.userStats
         return {k:v for k,v in self.userStats.items() if v > 10}
 
     def updateStats(self, user):

@@ -26,6 +26,15 @@ clientID = configFile.readline()
 configFile.close()
 bot = commands.Bot(command_prefix='^', case_insensitive=True)
 bot.remove_command('help')
+apiToken = ""
+try:
+    apiTokenFile = open('gelApiKey.config','r')
+    apiToken = apiTokenFile.readline()
+    apiTokenFile.close()
+except OSError:
+    print("No gelApiKey.config file found for a gelbooru api key, no api key will be used and you will not be able to access blacklisted content.")
+
+
 
 auditor = Auditor("audit.txt")
 auditor.generateAuditLog()
@@ -256,7 +265,7 @@ async def gel(ctx, *, arg):
         userLimited = False
         gelbooruLimiter.limitUser(str(ctx.message.author))
 
-    caller = gelbooruCaller(ctx, arg)
+    caller = gelbooruCaller(ctx, apiToken, arg)
     caller.setArgs()
     caller.makeRequest(extremeFiltering)
     response = caller.getContent()

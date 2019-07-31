@@ -1,6 +1,6 @@
 audit.txt
 tag.txt
-token.config
+*.config
 *.pyc
 __pycache__/
 *.jpg

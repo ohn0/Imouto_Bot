@@ -3,11 +3,14 @@ from booruLib import booruLib
 import requests, json, random
 
 class gelbooruCaller(booruComm):
-    def __init__(self, ctx, args):
+    apiToken = ""
+    
+    def __init__(self, ctx, apiToken, args):
         super().__init__(ctx, args)
         self.apicall = booruLib.apiEndpoints[booruLib.GELBOORU]
         self.instance = "GELBOORU"
         self.filteredTags = "+-loli+-amputation+-drugs+-pain+-urine+-piss+-lolicon+-shotacon+-guro+-bestiality"
+        self.apiToken = apiToken
 
     def resolveResponse(self, extremeFilteringEnabled):
         try:
@@ -15,6 +18,7 @@ class gelbooruCaller(booruComm):
                 self.apicall += "200&json=1&tags="+self.tagList + self.filteredTags
             else:
                 self.apicall += "200&json=1&tags="+self.tagList
+            self.apicall += self.apiToken
             self.response = requests.get(self.apicall)
             self.response = self.response.json()
             responseLength = len(self.response)
