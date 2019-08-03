@@ -20,6 +20,8 @@ from booruLib import booruLib
 from filter import Filter
 from clientConnections import ClientConnections
 from asciiConverter import asciiConverter
+from bullyLoader import bullyLoader
+from helpResponse import helpResponse
 
 configFile = open('token.config', 'r')
 clientID = configFile.readline()
@@ -46,7 +48,8 @@ realbooruLimiter = UserLimiter()
 uptimeTracker = Timekeeper()
 ChannelFilter = Filter()
 ClientConnector = ClientConnections()
-
+bullyHandler = bullyLoader()
+helpResponder = helpResponse()
 
 async def isChannelNSFW(ctx):
     isNSFW = ctx.channel.is_nsfw()
@@ -104,7 +107,7 @@ async def updog(ctx):
 
 @bot.command(brief='bully a member')
 async def bully(ctx, arg1):
-    await ctx.send("{}, you're a freaky piece of trash.".format(arg1))
+    await ctx.send("{}, I'ma fucking rape you with a plunger tonight bby".format(arg1))
 
 @bot.command()
 async def bannedWords(ctx):
@@ -132,7 +135,8 @@ async def kona(ctx, *, arg):
         if(response["sendTags"]):
             await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
     else:
-        await ctx.send("Those tags returned no images, what's wrong with you " + ctx.message.author.mention)
+        await noImageFoundHandler(ctx)
+        # await ctx.send("Those tags returned no images, what's wrong with you " + ctx.message.author.mention)
 
 @bot.command()
 @commands.check(isChannelNSFW)
@@ -157,7 +161,8 @@ async def xxx(ctx, *, arg):
                 await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
 
         else:
-            await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
+            await noImageFoundHandler(ctx)
+            # await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
     else:
         await ctx.send("You just made a request! Your little sister can only do so much uwu " + ctx.message.author.mention)
 
@@ -184,7 +189,8 @@ async def r34(ctx, *, arg):
                 await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
 
         else:
-            await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
+            await noImageFoundHandler(ctx)
+            # await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
     else:
         await ctx.send("You just made a request! Your little sister can only do so much uwu " + ctx.message.author.mention)
         
@@ -212,7 +218,8 @@ async def yan(ctx, *, arg):
         if(response["sendTags"]):
             await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
     else:
-        await ctx.send("Those tags returned no images, what's wrong with you " + ctx.message.author.mention)
+        await noImageFoundHandler(ctx)
+        # await ctx.send("Those tags returned no images, what's wrong with you " + ctx.message.author.mention)
 
 @bot.command(brief='gets an image from safebooru, an imageboard consisting of SFW anime images.')
 async def sfw(ctx, *, arg):
@@ -231,7 +238,8 @@ async def sfw(ctx, *, arg):
             await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
 
     else:
-        await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
+        await noImageFoundHandler(ctx)
+        # await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
 
 
 @bot.command(brief='gets a list of users that have most heavily made successful requests to the bot.')
@@ -278,7 +286,8 @@ async def gel(ctx, *, arg):
             if(response["sendTags"]):
                 await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
         else:
-            await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
+            await noImageFoundHandler(ctx)
+            # await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
     else:
         await ctx.send("You just made a request! Your little sister can only do so much uwu " + ctx.message.author.mention)
 
@@ -305,7 +314,8 @@ async def real(ctx, *, arg):
                 await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
 
         else:
-            await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
+            await noImageFoundHandler(ctx)
+            # await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
     else:
         await ctx.send("You just made a request! Your little sister can only do so much uwu " + ctx.message.author.mention)
         
@@ -411,7 +421,14 @@ async def art(ctx):
     print(blockString)
     await ctx.send(blockString)    
     
+@bot.command()
+async def help(ctx):
+    helpImage = helpResponder.getResponseImage()
+    await ctx.send("Help incoming!", file=discord.File('responses\\'+ helpImage))
 
 
+async def noImageFoundHandler(ctxVal):
+    insult = bullyHandler.getInsult()
+    await ctxVal.send("{}, {}".format(ctxVal.message.author.mention, insult))
 
 bot.run(clientID)
