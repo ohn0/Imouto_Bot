@@ -424,7 +424,7 @@ async def art(ctx):
 @bot.command()
 async def help(ctx):
     helpImage = helpResponder.getResponseImage()
-    await ctx.send("Help incoming!", file=discord.File('responses\\'+ helpImage))
+    await ctx.send("Help incoming!", file=discord.File('.\\responses\\'+ helpImage))
 
 
 async def noImageFoundHandler(ctxVal):
