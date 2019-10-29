@@ -18,15 +18,19 @@ from UserLimiter import UserLimiter
 from timeKeeper import Timekeeper
 from booruLib import booruLib
 from filter import Filter
+import datetime
 from clientConnections import ClientConnections
 from asciiConverter import asciiConverter
 from bullyLoader import bullyLoader
 from helpResponse import helpResponse
+from pymongo import MongoClient
+from Utility import Utility
 
-configFile = open('token.config', 'r')
-clientID = configFile.readline()
+configFile = open('tokenDEV.config', 'r')
+clientID = configFile.readline()[0:-1]
+commandPrefix = configFile.readline()[0]
 configFile.close()
-bot = commands.Bot(command_prefix='^', case_insensitive=True)
+bot = commands.Bot(command_prefix=commandPrefix, case_insensitive=True)
 bot.remove_command('help')
 apiToken = ""
 try:
@@ -37,7 +41,7 @@ except OSError:
     print("No gelApiKey.config file found for a gelbooru api key, no api key will be used and you will not be able to access blacklisted content.")
 
 
-
+torturing = False
 auditor = Auditor("audit.txt")
 auditor.generateAuditLog()
 auditLines = auditor.getInitialAuditLog()
@@ -129,11 +133,13 @@ async def kona(ctx, *, arg):
 
 
     if response != None:
-        auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "konachan")
-        userStats.updateStats(str(ctx.message.author))
-        await ctx.send(response["response"])
-        if(response["sendTags"]):
-            await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
+        for i in range(response["values"]):
+            auditor.audit(str(ctx.message.author), response["auditMessage"][i]["message"], response["auditMessage"][i]["tags"])
+            # auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "gelbooru")
+            await ctx.send(response["auditMessage"][i]["response"])
+            userStats.updateStats(str(ctx.message.author))
+            if(response["sendTags"]):
+                await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
     else:
         await noImageFoundHandler(ctx)
         # await ctx.send("Those tags returned no images, what's wrong with you " + ctx.message.author.mention)
@@ -154,11 +160,13 @@ async def xxx(ctx, *, arg):
     response = caller.getContent()
     if not userLimited:
         if response != None:
-            auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "realbooru")
-            await ctx.send(response["response"])
-            userStats.updateStats(str(ctx.message.author))
-            if(response["sendTags"]):
-                await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
+            for i in range(response["values"]):
+                auditor.audit(str(ctx.message.author), response["auditMessage"][i]["message"], response["auditMessage"][i]["tags"])
+                # auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "gelbooru")
+                await ctx.send(response["auditMessage"][i]["response"])
+                userStats.updateStats(str(ctx.message.author))
+                if(response["sendTags"]):
+                    await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
 
         else:
             await noImageFoundHandler(ctx)
@@ -169,6 +177,10 @@ async def xxx(ctx, *, arg):
 @bot.command()
 @commands.check(isChannelNSFW)
 async def r34(ctx, *, arg):
+    await invoker34(ctx, arg)
+        
+
+async def invoker34(ctx, arg):
     if isExplicitlyFiltered(ctx, arg):
         await ctx.send("Invalid tag entered in request.")
         return False
@@ -182,18 +194,19 @@ async def r34(ctx, *, arg):
     response = caller.getContent()
     if not userLimited:
         if response != None:
-            auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "realbooru")
-            await ctx.send(response["response"])
-            userStats.updateStats(str(ctx.message.author))
-            if(response["sendTags"]):
-                await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
+            for i in range(response["values"]):
+                auditor.audit(str(ctx.message.author), response["auditMessage"][i]["message"], response["auditMessage"][i]["tags"])
+                # auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "gelbooru")
+                await ctx.send(response["auditMessage"][i]["response"])
+                userStats.updateStats(str(ctx.message.author))
+                if(response["sendTags"]):
+                    await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
 
         else:
             await noImageFoundHandler(ctx)
             # await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
     else:
         await ctx.send("You just made a request! Your little sister can only do so much uwu " + ctx.message.author.mention)
-        
 
 
 
@@ -212,11 +225,13 @@ async def yan(ctx, *, arg):
     response = caller.getContent()
 
     if response != None:
-        auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "yandere")
-        userStats.updateStats(str(ctx.message.author))
-        await ctx.send(response["response"])
-        if(response["sendTags"]):
-            await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
+        for i in range(response["values"]):
+            auditor.audit(str(ctx.message.author), response["auditMessage"][i]["message"], response["auditMessage"][i]["tags"])
+            # auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "gelbooru")
+            await ctx.send(response["auditMessage"][i]["response"])
+            userStats.updateStats(str(ctx.message.author))
+            if(response["sendTags"]):
+                await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
     else:
         await noImageFoundHandler(ctx)
         # await ctx.send("Those tags returned no images, what's wrong with you " + ctx.message.author.mention)
@@ -230,12 +245,13 @@ async def sfw(ctx, *, arg):
     # response = caller.getResponse()
 
     if response != None:
-        # await ctx.send("ping")
-        auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "safebooru")
-        userStats.updateStats(str(ctx.message.author))
-        await ctx.send(response["response"])
-        if(response["sendTags"]):
-            await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
+        for i in range(response["values"]):
+            auditor.audit(str(ctx.message.author), response["auditMessage"][i]["message"], response["auditMessage"][i]["tags"])
+            # auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "gelbooru")
+            await ctx.send(response["auditMessage"][i]["response"])
+            userStats.updateStats(str(ctx.message.author))
+            if(response["sendTags"]):
+                await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
 
     else:
         await noImageFoundHandler(ctx)
@@ -273,18 +289,22 @@ async def gel(ctx, *, arg):
         userLimited = False
         gelbooruLimiter.limitUser(str(ctx.message.author))
 
-    caller = gelbooruCaller(ctx, apiToken, arg)
-    caller.setArgs()
-    caller.makeRequest(extremeFiltering)
-    response = caller.getContent()
 
     if not userLimited:
+        caller = gelbooruCaller(ctx, apiToken, arg)
+        caller.setArgs()
+        caller.makeRequest(extremeFiltering)
+        response = caller.getContent()
+
+        # response = Utility.makeRequestAndGetData(ctx, booruLib.GELBOORU, arg, apiToken)
         if response != None:
-            auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "gelbooru")
-            await ctx.send(response["response"])
-            userStats.updateStats(str(ctx.message.author))
-            if(response["sendTags"]):
-                await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
+            for i in range(response["values"]):
+                auditor.audit(str(ctx.message.author), response["auditMessage"][i]["message"], response["auditMessage"][i]["tags"])
+                # auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "gelbooru")
+                await ctx.send(response["auditMessage"][i]["response"])
+                userStats.updateStats(str(ctx.message.author))
+                if(response["sendTags"]):
+                    await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
         else:
             await noImageFoundHandler(ctx)
             # await ctx.send("Those tags returned no images, try again, you freak, " + ctx.message.author.mention)
@@ -307,11 +327,13 @@ async def real(ctx, *, arg):
     response = caller.getContent()
     if not userLimited:
         if response != None:
-            auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "realbooru")
-            await ctx.send(response["response"])
-            userStats.updateStats(str(ctx.message.author))
-            if(response["sendTags"]):
-                await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
+            for i in range(response["values"]):
+                auditor.audit(str(ctx.message.author), response["auditMessage"][i]["message"], response["auditMessage"][i]["tags"])
+                # auditor.audit(str(ctx.message.author), response["auditMessage"][0], response["auditMessage"][1], "gelbooru")
+                await ctx.send(response["auditMessage"][i]["response"])
+                userStats.updateStats(str(ctx.message.author))
+                if(response["sendTags"]):
+                    await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
 
         else:
             await noImageFoundHandler(ctx)
@@ -329,13 +351,14 @@ async def prev(ctx):
 
 @bot.command(brief='bot will disconnect')
 async def bye(ctx):
-    if not ctx.author.guild_permissions.ban_members:
+    if(int(ctx.author.id) == 452972260547100692):
+        await ctx.send("Y'all freaking me out too much, I'm out.")
+        ClientConnector.writeServerToggleStatus()
+        await bot.logout()
+        await bot.close()
+    else:
         await ctx.send("You can't run that command.")
         return False
-    ClientConnector.writeServerToggleStatus()
-    await ctx.send("Y'all freaking me out too much, I'm out.")
-    await bot.logout()
-    await bot.close()
 
 @bot.command(brief='unused atm')
 async def tagStats(ctx):
@@ -404,7 +427,7 @@ async def avenge(ctx):
         bytesSaved = await ctx.message.attachments[0].save(ctx.message.attachments[0].filename)
         AsciiConverter = asciiConverter()
         grayImage = AsciiConverter.applyAvengerTemplate(ctx.message.attachments[0].filename)
-        #TODO: show message that save was completed.
+        #TODO: show message that save was completed.                
         if bytesSaved > 0:
             grayscaleImg = open(grayImage,'rb')
             await ctx.send("Here you go, bitch, {}".format(ctx.message.author.mention), file=discord.File(grayscaleImg))
@@ -425,10 +448,32 @@ async def art(ctx):
 async def help(ctx):
     helpImage = helpResponder.getResponseImage()
     await ctx.send("Help incoming!", file=discord.File('.//responses//'+ helpImage))
+    await ctx.send("Here's a github with more info about the bot and the source!\nhttps://github.com/ohn0/Imouto_Bot")
+    await ctx.send('''
+^gel <arg1> <arg2> <arg3>
+^kona <arg1> ...
+^yan  <arg1> ...
+^sfw  <arg1> ...
+^real <arg1> ...
+if the arg is multiple words, replace spaces with '_'
+ex: 'black lagoon' -> black_lagoon
+can add multiple tags separated by space
+ex: ^gel azur_lane swimsuit beach
+^gel searches gelbooru,  hentai pics
+^kona searches konachan, anime wallpapers
+^yan searches yande.re,  highres images and artbook scans
+^sfw searches safebooru, SFW anime images
+^real searches realbooru, traps galore,
+^r34 searches rule34booru, find porn of anything you want except yourself because even you're not that wanted
+----
+You can search for multiple images at once by appending '--numbX' after the tags, with X replacing however many images you want capped at 9 
+ex: ^gel cake --numb3 -> results in 3 images that have cake in them being posted''')
 
 
 async def noImageFoundHandler(ctxVal):
     insult = bullyHandler.getInsult()
     await ctxVal.send("{}, {}".format(ctxVal.message.author.mention, insult))
+
+
 
 bot.run(clientID)
