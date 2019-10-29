@@ -29,17 +29,22 @@ class realbooruCaller(booruComm):
 
     def resolveContent(self):
         if self.imageReturned:
-            imageNum = self.randPost
-            imageURL = self.buildURL(imageNum)
-            responseMessage = self.ctx.message.author.mention + ", Here's your image, big brother! " + imageURL
+            auditMessages = []
+            for v in range(self.modularValue):
+                imageNum = random.randint(0,50)
+                imageURL = self.buildURL(imageNum)
+                auditMessages.append({
+                    "message":imageURL,
+                    "tags":self.response[imageNum]['tags'],
+                    "response": self.ctx.message.author.mention + ", Here's your image, big brother! " + imageURL
+                })
+                responseMessage = self.ctx.message.author.mention + ", Here's your image, big brother! " + imageURL
             self.tags = self.response[imageNum]['tags']
             return { "response": responseMessage,
                      "sendTags": self.sendTags,
                      "tags" : self.tags, 
-                     "auditMessage": [
-                         str(imageURL),
-                         str(self.response[imageNum]['tags'])
-                     ]}
+                     "auditMessage": auditMessages,
+                     "values":self.modularValue}
         else:
             return None
 

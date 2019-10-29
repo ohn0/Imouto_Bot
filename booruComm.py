@@ -29,6 +29,8 @@ class booruComm:
         self.imageReturned = True
         self.sendTags = False
         self.usePages = False
+        self.modularLoading = False
+        self.modularValue = 1
         self.tags = ""
         self.ctx = ctx
         self.params = []
@@ -41,7 +43,11 @@ class booruComm:
                 self.tagList = arg + "+" + self.tagList
                 self.tagLogger.append(arg)
             else:
-                self.params.append(arg)
+                if arg[0:-1] == '--numb':
+                    self.modularLoading = True
+                    self.modularValue = int(arg[-1])
+                else:
+                    self.params.append(arg)
 
         for param in self.params:
             if param == '--tags':
@@ -81,16 +87,29 @@ class booruComm:
 
     def resolveContent(self):
         if self.imageReturned:
+            auditMessages = []
+            for v in range(self.modularValue):
+                self.randPost = random.randint(0,50)
+                auditMessages.append({
+                    "message":self.response[self.randPost]['file_url'],
+                    "tags":self.response[self.randPost]['tags'],
+                    "response": self.ctx.message.author.mention + ", Here's your image, big brother! " + self.response[self.randPost]['file_url']
+                })
+                # auditMessages.append(self.response[self.randPost]['file_url'])
+                # auditMessages.append(self.response[self.randPost]['tags'])
             imageNum = self.randPost#random.randint(0, self.randPost - 1)
             responseMessage = self.ctx.message.author.mention + ", Here's your image, big brother! " + self.response[imageNum]['file_url']
             self.tags = self.response[imageNum]['tags']
-            return { "response": responseMessage,
+            return { 
                      "sendTags": self.sendTags,
                      "tags" : self.tags, 
-                     "auditMessage": [
-                         str(self.response[imageNum]['file_url']),
-                         str(self.response[imageNum]['tags'])
-                     ]}
+                    #  "auditMessage": [
+                    #      str(self.response[imageNum]['file_url']),
+                    #      str(self.response[imageNum]['tags'])
+                    #  ]
+                     "auditMessage":auditMessages,
+                     "values":self.modularValue
+                     }
         else:
             return None
             
