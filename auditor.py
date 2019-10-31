@@ -13,7 +13,7 @@ class Auditor:
         self.filename = filename
 
     def generateAuditLog(self):
-        self.textFile = open(self.filename, 'r')
+        self.textFile = open(self.filename, 'r', encoding="utf8")
         self.auditLines = self.textFile.readlines()
         self.textFile.close()
 

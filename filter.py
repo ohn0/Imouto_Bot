@@ -1,6 +1,6 @@
 class Filter():
     filteredWords = []
-
+    contextWordBanner = None
     def __init__(self):
         filterFile = open('filter.txt', 'r')
         for f in filterFile:

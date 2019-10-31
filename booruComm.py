@@ -72,6 +72,7 @@ class booruComm:
             if responseLength == 0:
                 self.imageReturned = False
             else:
+                print(responseLength)
                 self.randPost = random.randint(0, responseLength-1)
         except json.decoder.JSONDecodeError:
             self.imageReturned = False
@@ -89,7 +90,7 @@ class booruComm:
         if self.imageReturned:
             auditMessages = []
             for v in range(self.modularValue):
-                self.randPost = random.randint(0,50)
+                self.randPost = random.randint(0,self.randPost)
                 auditMessages.append({
                     "message":self.response[self.randPost]['file_url'],
                     "tags":self.response[self.randPost]['tags'],

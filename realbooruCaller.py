@@ -31,7 +31,7 @@ class realbooruCaller(booruComm):
         if self.imageReturned:
             auditMessages = []
             for v in range(self.modularValue):
-                imageNum = random.randint(0,50)
+                imageNum = random.randint(0,self.randPost)
                 imageURL = self.buildURL(imageNum)
                 auditMessages.append({
                     "message":imageURL,

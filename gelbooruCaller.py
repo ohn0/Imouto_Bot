@@ -26,6 +26,7 @@ class gelbooruCaller(booruComm):
                 self.imageReturned = False
             else:
                 self.auditEntireResponse()
+                print(responseLength-1)
                 self.randPost = random.randint(0, responseLength-1)
         except json.decoder.JSONDecodeError:
             self.imageReturned = False
