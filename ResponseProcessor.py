@@ -10,4 +10,4 @@ class ResponseProcessor:
             await ctx.send(response["auditMessage"][i]["response"])
             userStats.updateStats(str(ctx.message.author))
             if(response["sendTags"]):
-                await ctx.send("These are the tags I found with that image: \n```" + response["tags"]+"```\n")
+                await ctx.send("These are the tags I found with that image: \n```" + response["auditMessage"][i]["tags"]+"```\n")

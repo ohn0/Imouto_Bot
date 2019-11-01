@@ -23,12 +23,12 @@ from clientConnections import ClientConnections
 from asciiConverter import asciiConverter
 from bullyLoader import bullyLoader
 from helpResponse import helpResponse
-from pymongo import MongoClient
+# from pymongo import MongoClient
 from Utility import Utility
 from ResponseProcessor import ResponseProcessor
 from serverContext import ServerContext
 
-configFile = open('tokenDEV.config', 'r')
+configFile = open('token.config', 'r')
 clientID = configFile.readline()[0:-1]
 commandPrefix = configFile.readline()[0]
 configFile.close()
@@ -61,6 +61,7 @@ serverContextHandler = ServerContext(ClientConnector.connectedClients)
 ChannelFilter.contextWordBanner = serverContextHandler
 
 async def isChannelNSFW(ctx):
+    print(ctx.channel.is_nsfw())
     isNSFW = ctx.channel.is_nsfw()
     if not isNSFW:
         await ctx.send("Can't do that on a SFW channel!")
@@ -70,6 +71,10 @@ def isExplicitlyFiltered(ctx, arg):
     if(ClientConnector.isChannelFiltered(ctx.guild.id)):
         if not ChannelFilter.isArgClean(arg.split(' ')):
             return True
+
+    if ChannelFilter.isArgCustomBanned(arg.split(' '), serverContextHandler.getBanContext(str(ctx.guild.id))):
+        return True
+
     return False
     
 
@@ -95,6 +100,8 @@ async def on_ready():
 @bot.event
 async def on_guild_join(guild):
     ClientConnector.updateConnectedClients(guild.id)
+    serverContextHandler.insertNewContext(str(guild.id))
+
 
 # @bot.command()
 # async def 
@@ -128,7 +135,7 @@ async def kona(ctx, *, arg):
     extremeFiltering = False
     if(ClientConnector.isChannelFiltered(ctx.guild.id)):
         extremeFiltering = True
-        if not ChannelFilter.isArgClean(arg.split(' ')):
+        if not ChannelFilter.isArgClean(arg.split(' ')) or ChannelFilter.isArgCustomBanned(arg.split(' '), serverContextHandler.getBanContext(str(ctx.guild.id))):
             await ctx.send("Your request contained a banned tag")
             return False #breaks out from executing the command any further
     caller = aggregateCaller(ctx, booruLib.KONACHAN, arg)
@@ -224,7 +231,7 @@ async def yan(ctx, *, arg):
     extremeFiltering = False
     if(ClientConnector.isChannelFiltered(ctx.guild.id)):
         extremeFiltering = True
-        if not ChannelFilter.isArgClean(arg.split(' ')):
+        if not ChannelFilter.isArgClean(arg.split(' ')) or ChannelFilter.isArgCustomBanned(arg.split(' '), serverContextHandler.getBanContext(str(ctx.guild.id))):
             await ctx.send("Your request contained a banned tag")
             return False #breaks out from executing the command any further
     caller = YandereCaller(ctx, arg)
@@ -306,7 +313,7 @@ async def gel(ctx, *, arg):
         
     if(ClientConnector.isChannelFiltered(ctx.guild.id)):
         extremeFiltering = True
-        if not ChannelFilter.isArgClean(arg.split(' ')):
+        if not ChannelFilter.isArgClean(arg.split(' ')) or ChannelFilter.isArgCustomBanned(arg.split(' '), serverContextHandler.getBanContext(str(ctx.guild.id))):
             await ctx.send("Your request contained a banned tag")
             return False #breaks out from executing the command any further
     
@@ -448,7 +455,6 @@ async def send(ctx):
     except discord.HTTPException:
         await ctx.send("Saving the file failed.")
 
-
 @bot.command()
 async def avenge(ctx):
     try:
@@ -475,13 +481,19 @@ async def art(ctx):
 
 
 @bot.command()
-async def banWord(ctx, *, arg):
-    serverContextHandler.banWordContext(arg, str(ctx.guild.id))
+async def banW(ctx, *, arg):
+    if serverContextHandler.banWordContext(str.lower(arg), str(ctx.guild.id)):
+        await ctx.send(arg + " was banned!")
+    else:
+        await ctx.send(arg + " is already banned!")
 
 @bot.command()
-async def unbanWord(ctx, *, arg):
-    serverContextHandler.unbanWordContext(arg, str(ctx.guild.id))
-    
+async def unbanW(ctx, *, arg):
+    if serverContextHandler.unbanWordContext(str.lower(arg), str(ctx.guild.id)):
+        await ctx.send(arg + " was unbanned!")
+    else:
+        await ctx.send(arg + " was never banned!")
+
 @bot.command()
 async def help(ctx):
     helpImage = helpResponder.getResponseImage()
@@ -512,6 +524,15 @@ async def noImageFoundHandler(ctxVal):
     insult = bullyHandler.getInsult()
     await ctxVal.send("{}, {}".format(ctxVal.message.author.mention, insult))
 
+
+@bot.command()
+async def banList(ctx):
+    bannedWordList = serverContextHandler.getBanContext(str(ctx.guild.id))
+    words = "```\n"
+    for word in bannedWordList:
+        words += word + "\n"
+    words += "```"
+    await ctx.send("These are the banned words on this server:\n" + words)
 
 
 bot.run(clientID)

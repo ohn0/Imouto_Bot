@@ -89,8 +89,9 @@ class booruComm:
     def resolveContent(self):
         if self.imageReturned:
             auditMessages = []
+            initialResponseSize = self.randPost
             for v in range(self.modularValue):
-                self.randPost = random.randint(0,self.randPost)
+                self.randPost = random.randint(0,initialResponseSize)
                 auditMessages.append({
                     "message":self.response[self.randPost]['file_url'],
                     "tags":self.response[self.randPost]['tags'],

@@ -20,13 +20,24 @@ class ServerContext():
         return self.serverContexts[clientID]
 
     def banWordContext(self, word,clientID):
-        self.serverContexts[clientID].append(word)
+        if word not in self.serverContexts[clientID]:
+            self.serverContexts[clientID].append(word)
+            return True
+        else:
+            return False
 
     def unbanWordContext(self, word,clientID):
-        self.serverContexts[clientID].remove(word)
+        if word in self.serverContexts[clientID]:
+            self.serverContexts[clientID].remove(word)
+            return True
+        else:
+            return False
 
     def saveContexts(self):
         with open('serverContext','w') as outFile:
             json.dump(self.serverContexts, outFile)
+
+    def insertNewContext(self, ctx):
+        self.serverContexts[ctx] = []
 
 
