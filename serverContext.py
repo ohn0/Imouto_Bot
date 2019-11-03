@@ -3,18 +3,26 @@ import json
 class ServerContext():
     serverContexts = None
     connectedClients = None
+    contextKeys = [
+        "clients",
+        "users",
+        "userStats",
+        "filter",
+        "insults"
+    ]
 
     def __init__(self, connectedClients):
         with open('serverContext',encoding="utf8") as jsonFile:
             try:
                 self.serverContexts = json.load(jsonFile)
+                self.updateContexts()
             except json.decoder.JSONDecodeError:
                 self.serverContexts = {}
 
 
         for client in connectedClients:
             if client not in self.serverContexts:
-                self.serverContexts[client] = []
+                self.insertNewContext(client)
 
     def getBanContext(self, clientID):
         return self.serverContexts[clientID]
@@ -33,11 +41,39 @@ class ServerContext():
         else:
             return False
 
-    def saveContexts(self):
-        with open('serverContext','w') as outFile:
+    def saveContexts(self, contexts, contextType):
+        for ctx in contexts:
+            self.serverContexts[ctx][contextType] = contexts[ctx]
+
+    def writeContextsToFile(self):
+        with open('serverContext', 'w') as outFile:
             json.dump(self.serverContexts, outFile)
 
+
     def insertNewContext(self, ctx):
-        self.serverContexts[ctx] = []
+        self.serverContexts[ctx] = {
+            "clients":[],
+            "users":{},
+            "userStats":{},
+            "filter":[],
+            "insults":[]
+        }
+
+    def getContext(self):
+        print(self.serverContexts)
+        return self.serverContexts
+
+    def getFilter(self, ctx):
+        return self.serverContexts[ctx]["filter"]
+
+    def updateContexts(self):
+        for context in self.serverContexts:
+            for key in self.contextKeys:
+                if key not in self.serverContexts[context]:
+                    print(key)
+                    if key == "users" or key == "userStats":
+                        self.serverContexts[context][key] = {}
+                    else:
+                        self.serverContexts[context][key] = []                                        
 
 

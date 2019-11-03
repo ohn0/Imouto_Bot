@@ -27,8 +27,10 @@ from helpResponse import helpResponse
 from Utility import Utility
 from ResponseProcessor import ResponseProcessor
 from serverContext import ServerContext
+from customFilter import CustomFilter
+from customInsults import CustomInsults
 
-configFile = open('token.config', 'r')
+configFile = open('tokenDEV.config', 'r')
 clientID = configFile.readline()[0:-1]
 commandPrefix = configFile.readline()[0]
 configFile.close()
@@ -59,6 +61,8 @@ helpResponder = helpResponse()
 responseProcessor = ResponseProcessor()
 serverContextHandler = ServerContext(ClientConnector.connectedClients)
 ChannelFilter.contextWordBanner = serverContextHandler
+customFilterer = CustomFilter(serverContextHandler.getContext())
+customInsult = CustomInsults(serverContextHandler.getContext())
 
 async def isChannelNSFW(ctx):
     print(ctx.channel.is_nsfw())
@@ -72,7 +76,7 @@ def isExplicitlyFiltered(ctx, arg):
         if not ChannelFilter.isArgClean(arg.split(' ')):
             return True
 
-    if ChannelFilter.isArgCustomBanned(arg.split(' '), serverContextHandler.getBanContext(str(ctx.guild.id))):
+    if ChannelFilter.isArgCustomBanned(arg.split(' '), customFilterer.getBanContext(str(ctx.guild.id))):
         return True
 
     return False
@@ -135,7 +139,7 @@ async def kona(ctx, *, arg):
     extremeFiltering = False
     if(ClientConnector.isChannelFiltered(ctx.guild.id)):
         extremeFiltering = True
-        if not ChannelFilter.isArgClean(arg.split(' ')) or ChannelFilter.isArgCustomBanned(arg.split(' '), serverContextHandler.getBanContext(str(ctx.guild.id))):
+        if not ChannelFilter.isArgClean(arg.split(' ')) or ChannelFilter.isArgCustomBanned(arg.split(' '), customFilterer.getBanContext(str(ctx.guild.id))):
             await ctx.send("Your request contained a banned tag")
             return False #breaks out from executing the command any further
     caller = aggregateCaller(ctx, booruLib.KONACHAN, arg)
@@ -231,7 +235,7 @@ async def yan(ctx, *, arg):
     extremeFiltering = False
     if(ClientConnector.isChannelFiltered(ctx.guild.id)):
         extremeFiltering = True
-        if not ChannelFilter.isArgClean(arg.split(' ')) or ChannelFilter.isArgCustomBanned(arg.split(' '), serverContextHandler.getBanContext(str(ctx.guild.id))):
+        if not ChannelFilter.isArgClean(arg.split(' ')) or ChannelFilter.isArgCustomBanned(arg.split(' '), customFilterer.getBanContext(str(ctx.guild.id))):
             await ctx.send("Your request contained a banned tag")
             return False #breaks out from executing the command any further
     caller = YandereCaller(ctx, arg)
@@ -313,7 +317,7 @@ async def gel(ctx, *, arg):
         
     if(ClientConnector.isChannelFiltered(ctx.guild.id)):
         extremeFiltering = True
-        if not ChannelFilter.isArgClean(arg.split(' ')) or ChannelFilter.isArgCustomBanned(arg.split(' '), serverContextHandler.getBanContext(str(ctx.guild.id))):
+        if not ChannelFilter.isArgClean(arg.split(' ')) or ChannelFilter.isArgCustomBanned(arg.split(' '), customFilterer.getBanContext(str(ctx.guild.id))):
             await ctx.send("Your request contained a banned tag")
             return False #breaks out from executing the command any further
     
@@ -389,6 +393,9 @@ async def prev(ctx):
 async def bye(ctx):
     if(int(ctx.author.id) == 452972260547100692):
         await ctx.send("Y'all freaking me out too much, I'm out.")
+        customFilterer.saveContexts(serverContextHandler)
+        customInsult.saveContexts(serverContextHandler)
+        serverContextHandler.writeContextsToFile()
         ClientConnector.writeServerToggleStatus()
         await bot.logout()
         await bot.close()
@@ -482,14 +489,14 @@ async def art(ctx):
 
 @bot.command()
 async def banW(ctx, *, arg):
-    if serverContextHandler.banWordContext(str.lower(arg), str(ctx.guild.id)):
+    if customFilterer.banWordContext(str.lower(arg), str(ctx.guild.id)):
         await ctx.send(arg + " was banned!")
     else:
         await ctx.send(arg + " is already banned!")
 
 @bot.command()
 async def unbanW(ctx, *, arg):
-    if serverContextHandler.unbanWordContext(str.lower(arg), str(ctx.guild.id)):
+    if customFilterer.unbanWordContext(str.lower(arg), str(ctx.guild.id)):
         await ctx.send(arg + " was unbanned!")
     else:
         await ctx.send(arg + " was never banned!")
@@ -520,20 +527,79 @@ You can search for multiple images at once by appending '--numbX' after the tags
 ex: ^gel cake --numb3 -> results in 3 images that have cake in them being posted''')
 
 
-async def noImageFoundHandler(ctxVal):
-    insult = bullyHandler.getInsult()
-    await ctxVal.send("{}, {}".format(ctxVal.message.author.mention, insult))
+async def noImageFoundHandler(ctxVal, arg1 = None):
+    # insult = bullyHandler.getInsult()
+    insult = customInsult.getInsultContext(str(ctxVal.guild.id))
+    insultIndex = random.randint(0, len(insult) - 1)
+    if arg1 != None:
+        await ctxVal.send("{}, {}".format(arg1, insult[insultIndex]))
+    else:
+        await ctxVal.send("{}, {}".format(ctxVal.message.author.mention, insult[insultIndex]))
 
 
 @bot.command()
 async def banList(ctx):
-    bannedWordList = serverContextHandler.getBanContext(str(ctx.guild.id))
+    bannedWordList = customFilterer.getBanContext(str(ctx.guild.id))
     words = "```\n"
     for word in bannedWordList:
         words += word + "\n"
     words += "```"
     await ctx.send("These are the banned words on this server:\n" + words)
 
+@bot.command()
+async def top10(ctx):
+    currentStats = userStats.getStats()
+    sortedStats = sorted(currentStats.items(), key=lambda x: x[1],reverse=True)
+    statMessage = "```\n\nThese are the top 10 people who abuse this loli the most\n```"
+    await ctx.send(statMessage)
+    messages = []
+    counter = 0
+    statCounter = 0
+    messages.append("```")
+    while statCounter < 10:
+        # statMessage += ("{:<30} {:<30}\n".format(str(stat[0]), str(stat[1])))
+        messages[counter] += (str(statCounter+1) + " {:<30} {:<30}\n".format(str(sortedStats[statCounter][0]), str(sortedStats[statCounter][1])))
+        statCounter+=1
+    messages[counter] += "```"
+    
+    for message in messages:
+        print(message)
+        await ctx.send(message)
+
+
+@bot.command()
+async def insult(ctx, arg1):
+    await noImageFoundHandler(ctx, arg1)
+
+@bot.command()
+async def addInsult(ctx, *, arg):
+    customInsult.addInsultContext(arg, str(ctx.guild.id))
+    await ctx.send("I learned a new insult! >:D\n"+ arg)
+
+@bot.command()
+async def removeInsult(ctx, *, arg):
+    print(arg[0])
+    success = False
+    try:
+        success = customInsult.deleteInsultContext(int(arg[0]) - 1, str(ctx.guild.id))
+    except ValueError:
+        success = False
+
+    if not success:
+        await ctx.send("I can't find that insult for this server. type ^getInsults to get a list and send me the number of the insult I need to remove.")
+    else:
+        await ctx.send("I forgot an insult!")
+
+@bot.command()
+async def insultlist(ctx):
+    customInsults = customInsult.getInsultContext(str(ctx.guild.id))
+    insults = "```\n"
+    counter = 1
+    for insult in customInsults:
+        insults += str(counter) + ". " + insult + "\n"
+        counter+=1
+    insults += "```"
+    await ctx.send("these are all the insults I know on this server.\n" + insults)
+
 
 bot.run(clientID)
-serverContextHandler.saveContexts()
