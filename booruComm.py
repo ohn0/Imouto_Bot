@@ -39,13 +39,15 @@ class booruComm:
 
     def splitArgs(self):
         for arg in self.argList:
-            if(not arg.startswith('--')):
+            if(not arg.startswith('--') and arg != '%%'):
                 self.tagList = arg + "+" + self.tagList
                 self.tagLogger.append(arg)
             else:
                 if arg[0:-1] == '--numb':
                     self.modularLoading = True
                     self.modularValue = int(arg[-1])
+                elif arg == '%%':
+                    self.params.append('--tags')
                 else:
                     self.params.append(arg)
 

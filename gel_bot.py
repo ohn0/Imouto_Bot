@@ -136,6 +136,9 @@ async def bannedWords(ctx):
 @bot.command(brief='Gets an image from konachan', description='Gets an image from konachan,an imageboard with anime wallpapers. NSFW')
 @commands.check(isChannelNSFW)
 async def kona(ctx, *, arg):
+    await keyKona(ctx, arg)
+
+async def keyKona(ctx, arg):
     extremeFiltering = False
     if(ClientConnector.isChannelFiltered(ctx.guild.id)):
         extremeFiltering = True
@@ -164,6 +167,9 @@ async def kona(ctx, *, arg):
 @bot.command()
 @commands.check(isChannelNSFW)
 async def xxx(ctx, *, arg):
+    await keyXxx(ctx, arg)
+
+async def keyXxx(ctx, arg):
     if isExplicitlyFiltered(ctx, arg):
         await ctx.send("Invalid tag entered in request.")
         return False
@@ -232,6 +238,9 @@ async def invoker34(ctx, arg):
 @bot.command(brief='gets an image from yande.re, an imageboard with highres scans. NSFW')
 @commands.check(isChannelNSFW)
 async def yan(ctx, *, arg):
+    await keyYan(ctx,arg)
+
+async def keyYan(ctx, arg):
     extremeFiltering = False
     if(ClientConnector.isChannelFiltered(ctx.guild.id)):
         extremeFiltering = True
@@ -258,6 +267,9 @@ async def yan(ctx, *, arg):
 
 @bot.command(brief='gets an image from safebooru, an imageboard consisting of SFW anime images.')
 async def sfw(ctx, *, arg):
+    await keySfw(ctx, arg)
+
+async def keySfw(ctx, arg):
     caller = sfwCaller(ctx, arg)
     caller.setArgs()
     caller.makeRequest()
@@ -310,6 +322,9 @@ async def stats(ctx):
 @bot.command(brief='gets an image from Gelbooru, an imageboard that contains a massive collection of anime images, very NSFW')
 @commands.check(isChannelNSFW)
 async def gel(ctx, *, arg):
+    await keyGel(ctx, arg)
+
+async def keyGel(ctx, arg):
     extremeFiltering = False
     # if isExplicitlyFiltered(ctx, arg):
     #     await ctx.send("Invalid tag entered in request.")
@@ -353,6 +368,9 @@ async def gel(ctx, *, arg):
 @bot.command(brief='It\'s a traaaaap', description='Gets an image from realbooru, NSFW')
 @commands.check(isChannelNSFW)
 async def real(ctx, *, arg):
+    await keyReal(ctx, arg)
+
+async def keyReal(ctx, arg):
     if isExplicitlyFiltered(ctx, arg):
         await ctx.send("Invalid tag entered in request.")
         return False
@@ -530,11 +548,22 @@ ex: ^gel cake --numb3 -> results in 3 images that have cake in them being posted
 async def noImageFoundHandler(ctxVal, arg1 = None):
     # insult = bullyHandler.getInsult()
     insult = customInsult.getInsultContext(str(ctxVal.guild.id))
-    insultIndex = random.randint(0, len(insult) - 1)
-    if arg1 != None:
-        await ctxVal.send("{}, {}".format(arg1, insult[insultIndex]))
+
+    if serverContextHandler.getContextConfigKeyValue(str(ctxVal.guild.id),"disgust"):
+        insultIndex = random.randint(0, len(insult))
     else:
-        await ctxVal.send("{}, {}".format(ctxVal.message.author.mention, insult[insultIndex]))
+        insultIndex = random.randint(0, len(insult)-1)    
+
+    if(insultIndex == len(insult)):
+        if arg1 != None:
+            await ctxVal.send("{}".format(arg1), file=discord.File('.//responses//disgusting.png'))
+        else:
+            await ctxVal.send("{}".format(ctxVal.message.author.mention), file=discord.File('.//responses//disgusting.png'))
+    else:
+        if arg1 != None:
+            await ctxVal.send("{}, {}".format(arg1, insult[insultIndex]))
+        else:
+            await ctxVal.send("{}, {}".format(ctxVal.message.author.mention, insult[insultIndex]))
 
 
 @bot.command()
@@ -601,5 +630,34 @@ async def insultlist(ctx):
     insults += "```"
     await ctx.send("these are all the insults I know on this server.\n" + insults)
 
+@bot.command()
+async def toggleDisgust(ctx):
+    updatedValue = serverContextHandler.toggleContextConfig(str(ctx.guild.id),"disgust")
+
+    if updatedValue:
+        await ctx.send("disgust image will be used in insults")
+    else:
+        await ctx.send("disgust image will not be used in insults")
+
+@bot.command()
+async def rand(ctx, *, arg):
+    source = arg
+    pid = "&pid="+str(random.randint(0, 100))
+    if source == "gel":
+        await keyGel(ctx,arg = "* "+pid)
+    elif source == "yan":
+        await keyYan(ctx,arg = "* "+pid)
+    elif source == "kona":
+        await keyKona(ctx,arg = "* "+pid)
+    elif source == "sfw":
+        await keySfw(ctx,arg = "* "+pid)
+    elif source == "real":
+        await keyReal(ctx,arg = "* "+pid)
+    elif source == "r34":
+        await invoker34(ctx,arg = "* "+pid)
+    elif source == "xxx":
+        await keyXxx(ctx,arg = "* "+pid)
+    else:
+        await ctx.send("Invalid source entered. only the following are valid sources:\ngel\nyan\nkona\nsfw\nreal\nr34\nxxx")
 
 bot.run(clientID)

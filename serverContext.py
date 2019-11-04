@@ -8,7 +8,8 @@ class ServerContext():
         "users",
         "userStats",
         "filter",
-        "insults"
+        "insults",
+        "config"
     ]
 
     def __init__(self, connectedClients):
@@ -56,11 +57,14 @@ class ServerContext():
             "users":{},
             "userStats":{},
             "filter":[],
-            "insults":[]
+            "insults":[],
+            "config":{
+                "disgust" : False
+            }
         }
 
     def getContext(self):
-        print(self.serverContexts)
+        # print(self.serverContexts)
         return self.serverContexts
 
     def getFilter(self, ctx):
@@ -70,10 +74,21 @@ class ServerContext():
         for context in self.serverContexts:
             for key in self.contextKeys:
                 if key not in self.serverContexts[context]:
-                    print(key)
+                    # print(key)
                     if key == "users" or key == "userStats":
                         self.serverContexts[context][key] = {}
+                    elif key == "config":
+                        self.serverContexts[context][key] = {
+                            "disgust" : False
+                        }
                     else:
-                        self.serverContexts[context][key] = []                                        
+                        self.serverContexts[context][key] = []
+
+    def toggleContextConfig(self, ctx, configKey):
+        self.serverContexts[ctx]["config"][configKey] = not self.serverContexts[ctx]["config"][configKey]
+        return self.serverContexts[ctx]["config"][configKey]
+
+    def getContextConfigKeyValue(self, ctx, configKey):
+        return self.serverContexts[ctx]["config"][configKey]                                                                    
 
 

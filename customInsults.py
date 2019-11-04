@@ -16,7 +16,7 @@ class CustomInsults():
 
     def deleteInsultContext(self, insultIndex, clientID):
         try:
-            print(self.serverContexts[clientID])
+            # print(self.serverContexts[clientID])
             del self.serverContexts[clientID][insultIndex]
             return True
         except IndexError:
