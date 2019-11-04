@@ -541,8 +541,23 @@ ex: ^gel azur_lane swimsuit beach
 ^real searches realbooru, traps galore,
 ^r34 searches rule34booru, find porn of anything you want except yourself because even you're not that wanted
 ----
+You can search for tags faster by adding %% to the request
+----
 You can search for multiple images at once by appending '--numbX' after the tags, with X replacing however many images you want capped at 9 
-ex: ^gel cake --numb3 -> results in 3 images that have cake in them being posted''')
+ex: ^gel cake --numb3 -> results in 3 images that have cake in them being posted
+----
+^rand <gel|kona|yan|sfw|real|r34|xxx> returns a random image from the specified source
+---
+You can add and remove insults for the  server to use
+^addinsult <insult> adds the insult
+^removeinsult <insult key> removes the insult, you need to specify the number of the insult that is returned when you use ^insultlist
+^insultlist returns a list of insults along with a numbered key to access them for deletion
+---
+You can ban specific words across your server
+^banw <word> prevents any request from succeeding if <word> is in the request
+^unbanw <word> allows requests with <word> if it was previously banned
+^banlist returns a list of all banned words on the server
+''')
 
 
 async def noImageFoundHandler(ctxVal, arg1 = None):
@@ -615,7 +630,7 @@ async def removeInsult(ctx, *, arg):
         success = False
 
     if not success:
-        await ctx.send("I can't find that insult for this server. type ^getInsults to get a list and send me the number of the insult I need to remove.")
+        await ctx.send("I can't find that insult for this server. type ^insultlist to get a list and send me the number of the insult I need to remove.")
     else:
         await ctx.send("I forgot an insult!")
 
