@@ -120,8 +120,11 @@ async def piss(ctx, arg):
         print(arg)
         await ctx.send("on me? ówò")
     else:
-        pissImage = open('letitalloutofyou.jpeg', 'rb')
-        await ctx.send("okay papi I'll squirt my love liquid onto  {}".format(arg), file = discord.File(pissImage))
+        if serverContextHandler.getContextConfigKeyValue(str(ctx.guild.id),"piss"):
+            pissImage = open('letitalloutofyou.jpeg', 'rb')
+            await ctx.send("okay papi I'll squirt my love liquid onto  {}".format(arg), file = discord.File(pissImage))
+        else:
+            await ctx.send("okay papi I'll squirt my love liquid onto  {}".format(arg))
 
 @bot.command(brief='why is this here', description='fuck you, hash')
 async def updog(ctx):
@@ -658,6 +661,16 @@ async def toggleDisgust(ctx):
         await ctx.send("disgust image will be used in insults")
     else:
         await ctx.send("disgust image will not be used in insults")
+
+@bot.command()
+async def togglePiss(ctx):
+    updateValue = serverContextHandler.toggleContextConfig(str(ctx.guild.id), "piss")
+    
+    
+    if updateValue:
+        await ctx.send("piss image will be used")
+    else:
+        await ctx.send("piss image will not be used.")
 
 @bot.command()
 async def rand(ctx, *, arg):

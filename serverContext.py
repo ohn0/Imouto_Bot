@@ -17,6 +17,7 @@ class ServerContext():
             try:
                 self.serverContexts = json.load(jsonFile)
                 self.updateContexts()
+                self.updateContextConfig()
             except json.decoder.JSONDecodeError:
                 self.serverContexts = {}
 
@@ -50,7 +51,6 @@ class ServerContext():
         with open('serverContext', 'w') as outFile:
             json.dump(self.serverContexts, outFile)
 
-
     def insertNewContext(self, ctx):
         self.serverContexts[ctx] = {
             "clients":[],
@@ -59,7 +59,7 @@ class ServerContext():
             "filter":[],
             "insults":[],
             "config":{
-                "disgust" : False
+                "disgust" : False,
             }
         }
 
@@ -79,10 +79,18 @@ class ServerContext():
                         self.serverContexts[context][key] = {}
                     elif key == "config":
                         self.serverContexts[context][key] = {
-                            "disgust" : False
+                            "disgust" : False,
                         }
                     else:
                         self.serverContexts[context][key] = []
+
+    def updateContextConfig(self):
+        for context in self.serverContexts:
+            if "disgust" not in self.serverContexts[context]["config"]:
+                self.serverContexts[context]["config"]["disgust"] = False               
+            elif "piss" not in self.serverContexts[context]["config"]:
+                self.serverContexts[context]["config"]["piss"] = False
+
 
     def toggleContextConfig(self, ctx, configKey):
         self.serverContexts[ctx]["config"][configKey] = not self.serverContexts[ctx]["config"][configKey]
