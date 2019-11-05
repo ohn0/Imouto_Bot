@@ -115,7 +115,7 @@ async def uptime(ctx):
     await ctx.send("I have been working hard for {}\nI was born on {}".format(uptimeTracker.getUptime(), uptimeTracker.getStartTime()))
 
 @bot.command(brief='uwu')
-async def piss(ctx, arg):
+async def piss(ctx, *, arg):
     if arg is None:
         print(arg)
         await ctx.send("on me? ówò")
@@ -440,6 +440,8 @@ async def gem(ctx):
 
 @bot.command(brief='turns on the ChannelFilter')
 async def toggleFilter(ctx):
+
+
     if not ctx.author.guild_permissions.ban_members:
         await ctx.send("You can't run that command.")
         return False
@@ -655,6 +657,9 @@ async def insultlist(ctx):
 
 @bot.command()
 async def toggleDisgust(ctx):
+
+    if not ctx.author.guild_permissions.ban_members:
+        await ctx.send("You can't run that command.")
     updatedValue = serverContextHandler.toggleContextConfig(str(ctx.guild.id),"disgust")
 
     if updatedValue:
@@ -664,6 +669,8 @@ async def toggleDisgust(ctx):
 
 @bot.command()
 async def togglePiss(ctx):
+    if not ctx.author.guild_permissions.ban_members:
+        await ctx.send("You can't run that command.")
     updateValue = serverContextHandler.toggleContextConfig(str(ctx.guild.id), "piss")
     
     
