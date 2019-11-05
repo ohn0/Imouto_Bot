@@ -115,8 +115,13 @@ async def uptime(ctx):
     await ctx.send("I have been working hard for {}\nI was born on {}".format(uptimeTracker.getUptime(), uptimeTracker.getStartTime()))
 
 @bot.command(brief='uwu')
-async def piss(ctx):
-    await ctx.send("on me? ówò")
+async def piss(ctx, arg):
+    if arg is None:
+        print(arg)
+        await ctx.send("on me? ówò")
+    else:
+        pissImage = open('letitalloutofyou.jpeg', 'rb')
+        await ctx.send("okay papi I'll squirt my love liquid onto  {}".format(arg), file = discord.File(pissImage))
 
 @bot.command(brief='why is this here', description='fuck you, hash')
 async def updog(ctx):
