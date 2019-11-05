@@ -660,24 +660,27 @@ async def toggleDisgust(ctx):
 
     if not ctx.author.guild_permissions.ban_members:
         await ctx.send("You can't run that command.")
-    updatedValue = serverContextHandler.toggleContextConfig(str(ctx.guild.id),"disgust")
-
-    if updatedValue:
-        await ctx.send("disgust image will be used in insults")
     else:
-        await ctx.send("disgust image will not be used in insults")
+            
+        updatedValue = serverContextHandler.toggleContextConfig(str(ctx.guild.id),"disgust")
+
+        if updatedValue:
+            await ctx.send("disgust image will be used in insults")
+        else:
+            await ctx.send("disgust image will not be used in insults")
 
 @bot.command()
 async def togglePiss(ctx):
     if not ctx.author.guild_permissions.ban_members:
         await ctx.send("You can't run that command.")
-    updateValue = serverContextHandler.toggleContextConfig(str(ctx.guild.id), "piss")
-    
-    
-    if updateValue:
-        await ctx.send("piss image will be used")
     else:
-        await ctx.send("piss image will not be used.")
+        updateValue = serverContextHandler.toggleContextConfig(str(ctx.guild.id), "piss")
+        
+        
+        if updateValue:
+            await ctx.send("piss image will be used")
+        else:
+            await ctx.send("piss image will not be used.")
 
 @bot.command()
 async def rand(ctx, *, arg):
