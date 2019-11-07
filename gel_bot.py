@@ -447,17 +447,26 @@ async def art(ctx):
 
 @bot.command()
 async def banW(ctx, *, arg):
-    if customFilterer.banWordContext(str.lower(arg), str(ctx.guild.id)):
-        await ctx.send(arg + " was banned!")
+
+    if not ctx.author.guild_permissions.ban_members:
+        await ctx.send("You can't run that command.")
+        return False
     else:
-        await ctx.send(arg + " is already banned!")
+        if customFilterer.banWordContext(str.lower(arg), str(ctx.guild.id)):
+            await ctx.send(arg + " was banned!")
+        else:
+            await ctx.send(arg + " is already banned!")
 
 @bot.command()
 async def unbanW(ctx, *, arg):
-    if customFilterer.unbanWordContext(str.lower(arg), str(ctx.guild.id)):
-        await ctx.send(arg + " was unbanned!")
+    if not ctx.author.guild_permissions.ban_members:
+        await ctx.send("You can't run that command.")
+        return False
     else:
-        await ctx.send(arg + " was never banned!")
+        if customFilterer.unbanWordContext(str.lower(arg), str(ctx.guild.id)):
+            await ctx.send(arg + " was unbanned!")
+        else:
+            await ctx.send(arg + " was never banned!")
 
 @bot.command()
 async def help(ctx, arg = None):
