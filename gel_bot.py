@@ -573,7 +573,7 @@ async def addInsult(ctx, *, arg):
     if not ctx.author.guild_permissions.ban_members:
         await ctx.send("You can't run that command.")
     return False
-    else:
+        else:
         customInsult.addInsultContext(arg, str(ctx.guild.id))
         await ctx.send("I learned a new insult! >:D\n"+ arg)
 
