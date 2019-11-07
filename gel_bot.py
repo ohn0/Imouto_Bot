@@ -464,7 +464,7 @@ async def help(ctx, arg = None):
     if arg == None or arg not in Utility.helpOptions:
         helpImage = helpResponder.getResponseImage()
         await ctx.send("Help incoming!", file=discord.File('.//responses//'+ helpImage))
-        await ctx.send("Type ^help <search|admin|insult|misc> to get more help about the specific topic. ")
+        await ctx.send("Type ^help search/admin/insult/misc to get more help about the specific topic(searching, insults, admin, misc).")
     else:
         await ctx.send(Utility.helpOptions[arg])
 
