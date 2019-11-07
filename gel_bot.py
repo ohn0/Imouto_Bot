@@ -570,22 +570,29 @@ async def insult(ctx, arg1):
 
 @bot.command()
 async def addInsult(ctx, *, arg):
-    customInsult.addInsultContext(arg, str(ctx.guild.id))
-    await ctx.send("I learned a new insult! >:D\n"+ arg)
+    if not ctx.author.guild_permissions.ban_members:
+        await ctx.send("You can't run that command.")
+    return False
+    else:
+        customInsult.addInsultContext(arg, str(ctx.guild.id))
+        await ctx.send("I learned a new insult! >:D\n"+ arg)
 
 @bot.command()
 async def removeInsult(ctx, *, arg):
-    print(arg[0])
-    success = False
-    try:
-        success = customInsult.deleteInsultContext(int(arg[0]) - 1, str(ctx.guild.id))
-    except ValueError:
-        success = False
-
-    if not success:
-        await ctx.send("I can't find that insult for this server. type ^insultlist to get a list and send me the number of the insult I need to remove.")
+    if not ctx.author.guild_permissions.ban_members:
+        await ctx.send("You can't run that command.")
+        return False
     else:
-        await ctx.send("I forgot an insult!")
+        success = False
+        try:
+            success = customInsult.deleteInsultContext(int(arg[0]) - 1, str(ctx.guild.id))
+        except ValueError:
+            success = False
+
+        if not success:
+            await ctx.send("I can't find that insult for this server. type ^insultlist to get a list and send me the number of the insult I need to remove.")
+        else:
+            await ctx.send("I forgot an insult!")
 
 @bot.command()
 async def insultlist(ctx):
