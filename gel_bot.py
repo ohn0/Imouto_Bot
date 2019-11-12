@@ -5,6 +5,7 @@ import asyncio
 import random
 import json
 import requests
+import sys
 from booruComm import booruComm
 from gelbooruCaller import gelbooruCaller
 from realbooruCaller import realbooruCaller
@@ -29,7 +30,7 @@ from serverContext import ServerContext
 from customFilter import CustomFilter
 from customInsults import CustomInsults
 
-configFile = open('tokenDEV.config', 'r')
+configFile = open(sys.argv[1], 'r')
 clientID = configFile.readline()[0:-1]
 commandPrefix = configFile.readline()[0]
 configFile.close()
@@ -146,6 +147,7 @@ async def kona(ctx, *, arg):
 
 async def keyKona(ctx, arg):
     extremeFiltering = False
+    arg += generateCustomBanList(str(ctx.guild.id))
     if(ClientConnector.isChannelFiltered(ctx.guild.id)):
         extremeFiltering = True
         if not ChannelFilter.isArgClean(arg.split(' ')) or ChannelFilter.isArgCustomBanned(arg.split(' '), customFilterer.getBanContext(str(ctx.guild.id))):
@@ -168,6 +170,7 @@ async def xxx(ctx, *, arg):
     await keyXxx(ctx, arg)
 
 async def keyXxx(ctx, arg):
+    arg += generateCustomBanList(str(ctx.guild.id))
     if isExplicitlyFiltered(ctx, arg):
         await ctx.send("Invalid tag entered in request.")
         return False
@@ -194,6 +197,7 @@ async def r34(ctx, *, arg):
         
 
 async def invoker34(ctx, arg):
+    arg += generateCustomBanList(str(ctx.guild.id))
     if isExplicitlyFiltered(ctx, arg):
         await ctx.send("Invalid tag entered in request.")
         return False
@@ -221,6 +225,7 @@ async def yan(ctx, *, arg):
     await keyYan(ctx,arg)
 
 async def keyYan(ctx, arg):
+    arg += generateCustomBanList(str(ctx.guild.id))    
     extremeFiltering = False
     if(ClientConnector.isChannelFiltered(ctx.guild.id)):
         extremeFiltering = True
@@ -243,6 +248,7 @@ async def sfw(ctx, *, arg):
     await keySfw(ctx, arg)
 
 async def keySfw(ctx, arg):
+    arg += generateCustomBanList(str(ctx.guild.id))    
     caller = sfwCaller(ctx, arg)
     caller.setArgs()
     caller.makeRequest()
@@ -285,8 +291,8 @@ async def gel(ctx, *, arg):
     await keyGel(ctx, arg) 
 
 async def keyGel(ctx, arg):
+    arg = arg +  generateCustomBanList(str(ctx.guild.id))
     extremeFiltering = False
-        
     if(ClientConnector.isChannelFiltered(ctx.guild.id)):
         extremeFiltering = True
         if not ChannelFilter.isArgClean(arg.split(' ')) or ChannelFilter.isArgCustomBanned(arg.split(' '), customFilterer.getBanContext(str(ctx.guild.id))):
@@ -318,6 +324,7 @@ async def real(ctx, *, arg):
     await keyReal(ctx, arg)
 
 async def keyReal(ctx, arg):
+    arg += generateCustomBanList(str(ctx.guild.id))
     if isExplicitlyFiltered(ctx, arg):
         await ctx.send("Invalid tag entered in request.")
         return False
@@ -572,8 +579,8 @@ async def insult(ctx, arg1):
 async def addInsult(ctx, *, arg):
     if not ctx.author.guild_permissions.ban_members:
         await ctx.send("You can't run that command.")
-    return False
-        else:
+        return False
+    else:
         customInsult.addInsultContext(arg, str(ctx.guild.id))
         await ctx.send("I learned a new insult! >:D\n"+ arg)
 
@@ -652,5 +659,12 @@ async def rand(ctx, *, arg):
         await keyXxx(ctx,arg = "* "+pid)
     else:
         await ctx.send("Invalid source entered. only the following are valid sources:\ngel\nyan\nkona\nsfw\nreal\nr34\nxxx")
+
+def generateCustomBanList(guildID):
+    customBans =  customFilterer.getBanContext(guildID)
+    customBanArgs = " "
+    for ban in customBans:
+        customBanArgs += "-{} ".format(ban)
+    return customBanArgs
 
 bot.run(clientID)
