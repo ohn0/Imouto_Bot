@@ -3,6 +3,7 @@ tag.txt
 *.config
 *.pyc
 __pycache__/
+.vscode/
 *.jpg
 *.png
 *.gif
