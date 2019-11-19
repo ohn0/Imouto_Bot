@@ -120,7 +120,7 @@ async def piss(ctx, arg = None):
         await ctx.send("on me? ówò")
     else:
         if serverContextHandler.getContextConfigKeyValue(str(ctx.guild.id),"piss"):
-            pissImage = open('letitalloutofyou.jpeg', 'rb')
+            pissImage = open('loli piss 2.gif', 'rb')
             await ctx.send("okay papi I'll squirt my love liquid onto  {}".format(arg), file = discord.File(pissImage))
         else:
             await ctx.send("okay papi I'll squirt my love liquid onto  {}".format(arg))
@@ -633,11 +633,22 @@ async def togglePiss(ctx):
     else:
         updateValue = serverContextHandler.toggleContextConfig(str(ctx.guild.id), "piss")
         
-        
         if updateValue:
             await ctx.send("piss image will be used")
         else:
             await ctx.send("piss image will not be used.")
+
+@bot.command()
+async def toggleLoli(ctx):
+    if not ctx.author.guild_permissions.ban_members:
+        await ctx.send("You can't run that command.")
+    else:
+        updateValue = serverContextHandler.toggleContextConfig(str(ctx.guild.id), "loli")
+
+        if updateValue:
+            await ctx.send("lolibooru can now be used. Nevermind lolibooru doesn't exist anymore.")
+        else:
+            await ctx.send("lolibooru can no longer be used.")
 
 @bot.command()
 async def rand(ctx, *, arg):

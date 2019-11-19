@@ -90,6 +90,8 @@ class ServerContext():
                 self.serverContexts[context]["config"]["disgust"] = False               
             elif "piss" not in self.serverContexts[context]["config"]:
                 self.serverContexts[context]["config"]["piss"] = False
+            elif "loli" not in self.serverContexts[context]["config"]:
+                self.serverContexts[context]["config"]["loli"] = False
 
 
     def toggleContextConfig(self, ctx, configKey):
