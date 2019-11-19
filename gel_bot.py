@@ -140,6 +140,10 @@ async def bully(ctx, arg1):
 async def bannedWords(ctx):
     print(str(ChannelFilter.getBannedWords()))
 
+@bot.command()
+async def eatmycum(ctx):
+    await ctx.send("**_I'M HUNGRY_**")
+
 @bot.command(brief='Gets an image from konachan', description='Gets an image from konachan,an imageboard with anime wallpapers. NSFW')
 @commands.check(isChannelNSFW)
 async def kona(ctx, *, arg):
