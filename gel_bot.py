@@ -122,11 +122,13 @@ async def piss(ctx, arg = None):
     if arg is None:
         await ctx.send("on me? ówò")
     else:
-        if serverContextHandler.getContextConfigKeyValue(str(ctx.guild.id),"piss"):
+        if ctx.channel.is_nsfw():
             pissImage = open('loli piss 2.gif', 'rb')
             await ctx.send("okay papi I'll squirt my love liquid onto  {}".format(arg), file = discord.File(pissImage))
         else:
-            await ctx.send("okay papi I'll squirt my love liquid onto  {}".format(arg))
+            pissImage = open('turtlepiss.gif', 'rb')
+            await ctx.send("okay papi I'll squirt my love liquid onto  {}".format(arg), file = discord.File(pissImage))
+
 
 @bot.command(brief='why is this here', description='fuck you, hash')
 async def updog(ctx):
