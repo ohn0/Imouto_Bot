@@ -63,6 +63,7 @@ serverContextHandler = ServerContext(ClientConnector.connectedClients)
 ChannelFilter.contextWordBanner = serverContextHandler
 customFilterer = CustomFilter(serverContextHandler.getContext())
 customInsult = CustomInsults(serverContextHandler.getContext())
+auditor.populateServerInfo(serverContextHandler.getServers())
 
 async def isChannelNSFW(ctx):
     print(ctx.channel.is_nsfw())
@@ -104,7 +105,9 @@ async def on_ready():
 @bot.event
 async def on_guild_join(guild):
     ClientConnector.updateConnectedClients(guild.id)
-    serverContextHandler.insertNewContext(str(guild.id))
+    auditor.insertNewContext(str(guild.id))
+    customFilterer.insertNewContext(str(guild.id))
+    customInsult.insertNewContext(str(guild.id))
 
 
 # @bot.command()
@@ -161,8 +164,6 @@ async def keyKona(ctx, arg):
     caller.setArgs()
     caller.makeRequest(extremeFiltering)
     response = caller.getContent()
-
-
     if response != None:
         await responseProcessor.interpretResponse(auditor, ctx, response, userStats)
     else:
@@ -351,7 +352,7 @@ async def keyReal(ctx, arg):
 
 @bot.command(brief='gets the tags for the last image posted by the bot.')
 async def prev(ctx):
-    lastAudit = auditor.getLastAudit()
+    lastAudit = auditor.getLastAudit(str(ctx.guild.id))
     await ctx.send('```This was the last request I successfully completed!'+
         '\nRequestor: {}\nfile_url: `{}`\ntags: {}```'.format(lastAudit["author"], lastAudit["file_url"], lastAudit["tags"]))
 

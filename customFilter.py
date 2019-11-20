@@ -25,3 +25,6 @@ class CustomFilter():
 
     def saveContexts(self, serverContext):
         serverContext.saveContexts(self.serverContexts, "filter")
+
+    def insertNewContext(self, context):
+        self.serverContexts[context] = []

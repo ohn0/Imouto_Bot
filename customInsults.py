@@ -24,4 +24,9 @@ class CustomInsults():
 
     def saveContexts(self, serverContext):
         serverContext.saveContexts(self.serverContexts, "insults")
+
+    def insertNewContext(self, context):
+        self.serverContexts[context] = []
+
+        
     

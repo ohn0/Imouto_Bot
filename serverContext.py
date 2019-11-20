@@ -84,6 +84,13 @@ class ServerContext():
                     else:
                         self.serverContexts[context][key] = []
 
+    def getServers(self):
+        contexts = []
+        for context in self.serverContexts:
+            contexts.append(context)
+
+        return contexts
+
     def updateContextConfig(self):
         for context in self.serverContexts:
             if "disgust" not in self.serverContexts[context]["config"]:
