@@ -694,11 +694,11 @@ async def corona(ctx):
 @bot.command()
 async def recovered(ctx):
     coronaResponse = requests.get('https://coronavirus-tracker-api.herokuapp.com/v2/latest').json()
-    await ctx.send(str(coronaResponse['latest']['recovered']) + " people have died due to corona!")
+    await ctx.send(str(coronaResponse['latest']['recovered']) + " people have recovered from corona!")
 
 @bot.command()
 async def diagnosed(ctx):
     coronaResponse = requests.get('https://coronavirus-tracker-api.herokuapp.com/v2/latest').json()
-    await ctx.send(str(coronaResponse['latest']['confirmed']) + " people have died due to corona!")
+    await ctx.send(str(coronaResponse['latest']['confirmed']) + " people currently have corona!")
 
 bot.run(clientID)
