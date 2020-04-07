@@ -688,8 +688,10 @@ def generateCustomBanList(guildID):
 
 @bot.command()
 async def corona(ctx):
-    coronaResponse = requests.get('https://coronavirus-tracker-api.herokuapp.com/v2/latest').json()
-    await ctx.send(str(coronaResponse['latest']['deaths']) + " people have died due to corona!")
+    coronaResponse = requests.get('https://api.covid19api.com/summary').json()
+    coronaStatus = str(coronaResponse['Global']['TotalDeaths']) + " people have died due to corona!\n" + str(coronaResponse['Global']['TotalConfirmed']) + " people have been confirmed to have coronavirus!\n" + str(coronaResponse['Global']['TotalRecovered']) + " have recovered from coronavirus!\n"
+    await ctx.send(str(coronaResponse['Global']['TotalDeaths']) + " people have died due to corona!")
+
 
 @bot.command()
 async def recovered(ctx):
