@@ -690,7 +690,7 @@ def generateCustomBanList(guildID):
 async def corona(ctx):
     coronaResponse = requests.get('https://api.covid19api.com/summary').json()
     coronaStatus = str(coronaResponse['Global']['TotalDeaths']) + " people have died due to corona!\n" + str(coronaResponse['Global']['TotalConfirmed']) + " people have been confirmed to have coronavirus!\n" + str(coronaResponse['Global']['TotalRecovered']) + " have recovered from coronavirus!\n"
-    await ctx.send(str(coronaResponse['Global']['TotalDeaths']) + " people have died due to corona!")
+    await ctx.send(coronaStatus)
 
 
 @bot.command()
