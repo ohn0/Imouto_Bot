@@ -68,6 +68,18 @@ class asciiConverter:
         avengeTemplateResized = avengeTemplate.resize(((int)(aWidth), (int)(aHeight)), Image.ANTIALIAS)
         avengeTemplate.close()
         return avengeTemplateResized
+
+    # def loveFeet(self, nImageRation):
+    #     #235,153
+
+    def loveFeet(self, feetImage):
+        rat = Image.open('feet.png')
+        test = Image.open(feetImage)
+
+        resizedTest = test.resize((181,158))
+        ratCopy = rat.copy()
+        ratCopy.paste(resizedTest, (235,152))
+        ratCopy.save('ratCopy.png')
     
     def blockGrayscaleValue(self, block):
         blockWidth = block.width

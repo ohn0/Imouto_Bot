@@ -450,6 +450,7 @@ async def avenge(ctx):
     except discord.HTTPException:
         await ctx.send("Saving the file failed.")
 
+
 @bot.command()
 async def art(ctx):
     bytesSaved = await ctx.message.attachments[0].save(ctx.message.attachments[0].filename)
@@ -684,6 +685,21 @@ def generateCustomBanList(guildID):
     for ban in customBans:
         customBanArgs += "-{} ".format(ban)
     return customBanArgs
+
+def lovefeet(ctx):
+    try:
+        #await ctx.send("lol fuck you, I'm not saving shit anymore you freak {}".format(ctx.message.author.mention))
+        bytesSaved = await ctx.message.attachments[0].save(ctx.message.attachments[0].filename)
+        AsciiConverter = asciiConverter()
+        AsciiConverter.loveFeet(ctx.message.attachments[0].filename)
+        #TODO: show message that save was completed.                
+        if bytesSaved > 0:
+            grayscaleImg = open('ratCopy.png','rb')
+            await ctx.send("Here you go, bitch, {}".format(ctx.message.author.mention), file=discord.File(grayscaleImg))
+    except discord.NotFound:
+        await ctx.send("File was deleted before I could save it!")
+    except discord.HTTPException:
+        await ctx.send("Saving the file failed.")
 
 
 @bot.command()
