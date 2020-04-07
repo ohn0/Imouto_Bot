@@ -686,7 +686,7 @@ def generateCustomBanList(guildID):
         customBanArgs += "-{} ".format(ban)
     return customBanArgs
 
-def lovefeet(ctx):
+async def lovefeet(ctx):
     try:
         #await ctx.send("lol fuck you, I'm not saving shit anymore you freak {}".format(ctx.message.author.mention))
         bytesSaved = await ctx.message.attachments[0].save(ctx.message.attachments[0].filename)
