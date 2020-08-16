@@ -23,4 +23,9 @@ class pixivComm:
         return str(randIllust.id) + '.' + imageURL[len(imageURL) - 3 : len(imageURL)]
 
     def getImage(self, illustration):
-        illustration.download(pathlib.Path("./pixiv"), filename = illustration.id)
+        illustration.download(pathlib.Path("./pixiv", size=enums.Size.LARGE), filename = illustration.id)
+
+    def testFetch(self):
+        self.pixivClient.authenticate(self.token)
+        illus = self.pixivClient.fetch_illustration(82417326)
+        self.getImage(illus)
