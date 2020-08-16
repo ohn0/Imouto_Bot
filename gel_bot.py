@@ -729,7 +729,7 @@ async def rule6(ctx):
 async def pixiv(ctx, *, args):
     pixivCall = pixivComm(pixivCredentials)
     foundImage = pixivCall.searchImage(args)
-    await ctx.send("Here you go! ", file=discord.File(open('./pixiv/' + foundImage, 'rb')))
+    await ctx.send("Here you go! ", file=discord.File(open(foundImage, 'rb')))
 
 
 bot.run(clientID)
