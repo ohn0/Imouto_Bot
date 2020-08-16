@@ -52,16 +52,16 @@ class ServerContext():
             json.dump(self.serverContexts, outFile)
 
     def insertNewContext(self, ctx):
-        self.contextKeys[ctx] = {
+        self.serverContexts[ctx] = {
             "clients":[],
             "users":{},
             "userStats":{},
             "filter":[],
             "insults":[],
-            "config":{
-                "disgust" : False,
-            }
+            "config":{}
         }
+
+
 
     def getContext(self):
         # print(self.serverContexts)

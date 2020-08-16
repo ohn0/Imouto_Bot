@@ -29,10 +29,12 @@ from ResponseProcessor import ResponseProcessor
 from serverContext import ServerContext
 from customFilter import CustomFilter
 from customInsults import CustomInsults
+from pixivComm import pixivComm
 
 configFile = open(sys.argv[1], 'r')
 clientID = configFile.readline()[0:-1]
 commandPrefix = configFile.readline()[0]
+pixivCredentials = {"user" : configFile.readline()[0:-1], "pw" : configFile.readline()}
 configFile.close()
 bot = commands.Bot(command_prefix=commandPrefix, case_insensitive=True)
 bot.remove_command('help')
@@ -123,7 +125,7 @@ async def piss(ctx, arg = None):
         await ctx.send("on me? ówò")
     else:
         if ctx.channel.is_nsfw():
-            pissImage = open('loli piss 2.gif', 'rb')
+            pissImage = open('tasty.gif', 'rb')
             await ctx.send("okay papi I'll squirt my love liquid onto  {}".format(arg), file = discord.File(pissImage))
         else:
             pissImage = open('turtlepiss.gif', 'rb')
@@ -134,8 +136,6 @@ async def piss(ctx, arg = None):
 async def updog(ctx):
     await ctx.send("What's up dog? " + ctx.message.author.mention)
 
-# @bot.command()
-# async def 
 
 @bot.command(brief='bully a member')
 async def bully(ctx, arg1):
@@ -719,5 +719,17 @@ async def recovered(ctx):
 async def diagnosed(ctx):
     coronaResponse = requests.get('https://coronavirus-tracker-api.herokuapp.com/v2/latest').json()
     await ctx.send(str(coronaResponse['latest']['confirmed']) + " people currently have corona!")
+
+
+@bot.command()
+async def rule6(ctx):
+    await ctx.send("Mantieni la chat in inglese (principalmente). Questo è un server di lingua inglese. Cerca di mantenere le conversazioni in inglese se non assolutamente necessario.")    
+    
+@bot.command()
+async def pixiv(ctx, *, args):
+    pixivCall = pixivComm(pixivCredentials)
+    foundImage = pixivCall.searchImage(args)
+    await ctx.send("Here you go! ", file=discord.File(open('./pixiv/' + foundImage, 'rb')))
+
 
 bot.run(clientID)
