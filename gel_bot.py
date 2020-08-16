@@ -34,7 +34,7 @@ from pixivComm import pixivComm
 configFile = open(sys.argv[1], 'r')
 clientID = configFile.readline()[0:-1]
 commandPrefix = configFile.readline()[0]
-pixivCredentials = {"user" : configFile.readline()[0:-1], "pw" : configFile.readline()}
+pixivCredentials = {"user" : configFile.readline()[0:-1], "pw" : configFile.readline()[0:-1]}
 configFile.close()
 bot = commands.Bot(command_prefix=commandPrefix, case_insensitive=True)
 bot.remove_command('help')
